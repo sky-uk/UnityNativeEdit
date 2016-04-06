@@ -98,10 +98,11 @@ public class PluginMsgHandler : MonoBehaviour {
 
 	public int RegisterAndGetReceiverId(PluginMsgReceiver receiver)
 	{
+		int index = snCurReceiverIdx;
 		snCurReceiverIdx++;
 
-		m_dictReceiver[snCurReceiverIdx] = receiver;
-		return snCurReceiverIdx;
+		m_dictReceiver[index] = receiver;
+		return index;
 	}
 
 	public void RemoveReceiver(int nReceiverId)
