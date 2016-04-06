@@ -145,6 +145,11 @@ public class NativeEditPlugin {
             }
         }
 
-        return jsonStaticRet.toString();
+        if (jsonStaticRet != null) {
+            return jsonStaticRet.toString();
+        }
+        else {
+            return "";
+        }
     }
 }

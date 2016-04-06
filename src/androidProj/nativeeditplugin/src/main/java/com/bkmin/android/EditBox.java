@@ -87,7 +87,7 @@ public class EditBox {
                 }
                 else
                 {
-                    Log.e(NativeEditPlugin.LOG_TAG, "EditBox not found");
+                    Log.e(NativeEditPlugin.LOG_TAG, "EditBox not found, id : " + nSenderId);
                 }
             }
 
@@ -201,6 +201,10 @@ public class EditBox {
             int backColor_a = (int) (255.0f * jsonObj.getDouble("backColor_a"));
 
             String contentType = jsonObj.getString("contentType");
+            String inputType = jsonObj.optString("inputType");
+            String keyboardType = jsonObj.optString("keyboardType");
+            String characterValidation = jsonObj.optString("characterValidation");
+
             String alignment = jsonObj.getString("align");
             boolean withDoneButton = jsonObj.getBoolean("withDoneButton");
             boolean multiline = jsonObj.getBoolean("multiline");
@@ -216,25 +220,43 @@ public class EditBox {
             edit.setLayoutParams(lp);
             edit.setPadding(0, 0, 0, 0);
 
-            int inputType = edit.getInputType();
-            if (contentType.equals("Autocorrected")) {
-                inputType |= InputType.TYPE_TEXT_FLAG_AUTO_CORRECT;
-            } else if (contentType.equals("IntegerNumber")) {
-                inputType |= InputType.TYPE_NUMBER_VARIATION_NORMAL;
-            } else if (contentType.equals("DecimalNumber")) {
-                inputType |= InputType.TYPE_NUMBER_FLAG_DECIMAL;
-            } else if (contentType.equals("Alphanumeric")) {
-                // inputType |= InputType.
-            } else if (contentType.equals("Name")) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_PERSON_NAME;
-            } else if (contentType.equals("EmailAddress")) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
-            } else if (contentType.equals("Password")) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_PASSWORD;
-            } else if (contentType.equals("Pin")) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_PHONETIC;
+            int editInputType = edit.getInputType();
+            switch (contentType) {
+                case "Standard" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
+                case "Autocorrected" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT; break;
+                case "IntegerNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL; break;
+                case "DecimalNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL; break;
+                case "Alphanumeric" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
+                case "Name" : editInputType |= InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
+                case "EmailAddress" : editInputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+                case "Password" : editInputType |= InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
+                case "Pin" : editInputType |= InputType.TYPE_TEXT_VARIATION_PHONETIC; break;
+
+                case "Custom" : // We need more details
+                    switch (keyboardType) {
+                        case "ASCIICapable" : editInputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS; break;
+                        case "NumbersAndPunctuation" : editInputType = InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL |InputType.TYPE_NUMBER_FLAG_SIGNED; break;
+                        case "URL" : editInputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_URI; break;
+                        case "NumberPad" : editInputType = InputType.TYPE_CLASS_NUMBER;  break;
+                        case "PhonePad" : editInputType = InputType.TYPE_CLASS_PHONE;  break;
+                        case "NamePhonePad" : editInputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
+                        case "EmailAddress" : editInputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
+                        default :  editInputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL;
+                    }
+
+                    if (multiline) editInputType  |=  InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
+
+                    switch (inputType) {
+                        case "AutoCorrect" : editInputType |=  InputType.TYPE_TEXT_FLAG_AUTO_CORRECT; break;
+                        case "Password" : editInputType |=  InputType.TYPE_NUMBER_VARIATION_PASSWORD | InputType.TYPE_TEXT_VARIATION_PASSWORD ; break;
+                    }
+                    break;
+
+                default : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // No action
+
             }
-            edit.setInputType(inputType);
+
+            edit.setInputType(editInputType);
 
             int gravity = 0;
             if (alignment.equals("UpperLeft"))
@@ -345,13 +367,17 @@ public class EditBox {
 
     public void Remove()
     {
-        layout.removeView(edit);
+        if (edit != null) {
+            layout.removeView(edit);
+        }
         edit = null;
     }
 
     public void SetText(String newText)
     {
-        edit.setText(newText);
+        if (edit != null) {
+            edit.setText(newText);
+        }
     }
     public String GetText()
     {
