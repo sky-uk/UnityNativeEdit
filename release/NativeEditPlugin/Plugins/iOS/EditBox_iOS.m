@@ -312,7 +312,7 @@ bool approxEqualFloat(float x, float y)
     {
         returnKeyType = UIReturnKeyNext;
     }
-    if ([returnKeyTypeString isEqualToString:@"Done"])
+    else if ([returnKeyTypeString isEqualToString:@"Done"])
     {
         returnKeyType = UIReturnKeyDone;
     }
