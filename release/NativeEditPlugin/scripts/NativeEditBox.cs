@@ -258,10 +258,6 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		switch (iosReturnKeyType)
 		{
-			case ReturnKeyType.Default:
-				jsonMsg["return_key_type"] = "Default";
-				break;
-
 			case ReturnKeyType.Next:
 				jsonMsg["return_key_type"] = "Next";
 				break;
@@ -271,6 +267,7 @@ public class NativeEditBox : PluginMsgReceiver {
 				break;
 
 			default:
+				jsonMsg["return_key_type"] = "Default";
 				break;
 		}
 
