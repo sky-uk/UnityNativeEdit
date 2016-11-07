@@ -124,9 +124,19 @@ public class NativeEditBox : PluginMsgReceiver {
 		base.Start();
 
 		bNativeEditCreated = false;
-		this.PrepareNativeEdit();
 
-		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR 
+		// Wait until the end of frame before initializing to ensure that Unity UI layout has been built. We used to
+		// initialize at Start, but that resulted in an invalid RectTransform position and size on the InputField if it
+		// was instantiated at runtime instead of being built in to the scene.
+		StartCoroutine(InitializeAtEndOfFrame());
+	}
+
+	IEnumerator InitializeAtEndOfFrame()
+	{
+		yield return new WaitForEndOfFrame();
+
+		this.PrepareNativeEdit();
+		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
 		
