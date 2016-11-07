@@ -307,12 +307,12 @@ bool approxEqualFloat(float x, float y)
     }
     
     UIReturnKeyType returnKeyType = UIReturnKeyDefault;
-    string returnKeyTypeString = [json getString:@"return_key_type"];
+    NSString* returnKeyTypeString = [json getString:@"return_key_type"];
     if ([returnKeyTypeString isEqualToString:@"Next"])
     {
         returnKeyType = UIReturnKeyNext;
     }
-    if ([returnKeyTypeString isEqualToString:@"Done"])
+    else if ([returnKeyTypeString isEqualToString:@"Done"])
     {
         returnKeyType = UIReturnKeyDone;
     }
