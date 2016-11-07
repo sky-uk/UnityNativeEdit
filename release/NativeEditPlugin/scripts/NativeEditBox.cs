@@ -49,7 +49,10 @@ public class NativeEditBox : PluginMsgReceiver {
 		public string placeHolder;
 	}
 
+	public enum ReturnKeyType { Default, Next, Done };
+
 	public bool	withDoneButton = true;
+	public ReturnKeyType iosReturnKeyType;
 	public event Action iosReturnPressed; 
 
 	private bool	bNativeEditCreated = false;
@@ -251,6 +254,24 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["withDoneButton"] = this.withDoneButton;
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
 		jsonMsg["multiline"] = mConfig.multiline;
+
+		switch (iosReturnKeyType)
+		{
+			case ReturnKeyType.Default:
+				jsonMsg["return_key_type"] = "Default";
+				break;
+
+			case ReturnKeyType.Next:
+				jsonMsg["return_key_type"] = "Next";
+				break;
+
+			case ReturnKeyType.Done:
+				jsonMsg["return_key_type"] = "Done";
+				break;
+
+			default:
+				break;
+		}
 
 		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);

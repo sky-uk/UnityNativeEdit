@@ -306,6 +306,17 @@ bool approxEqualFloat(float x, float y)
         keyboardDoneButtonView = nil;
     }
     
+    UIReturnKeyType returnKeyType = UIReturnKeyDefault;
+    string returnKeyTypeString = [json getString:@"return_key_type"];
+    if ([returnKeyTypeString isEqualToString:@"Next"])
+    {
+        returnKeyType = UIReturnKeyNext;
+    }
+    if ([returnKeyTypeString isEqualToString:@"Done"])
+    {
+        returnKeyType = UIReturnKeyDone;
+    }
+    
     if (multiline)
     {
         PlaceholderTextView* textView = [[PlaceholderTextView alloc] initWithFrame:CGRectMake(x, y, width, height)];
@@ -319,7 +330,7 @@ bool approxEqualFloat(float x, float y)
         
         textView.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
         textView.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
-        textView.returnKeyType = UIReturnKeyDefault;
+        textView.returnKeyType = returnKeyType;
         textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo  ;
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
@@ -344,7 +355,7 @@ bool approxEqualFloat(float x, float y)
         textField.text = @"";
         textField.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
         textField.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
-        textField.returnKeyType = UIReturnKeyDefault;
+        textField.returnKeyType = returnKeyType;
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
