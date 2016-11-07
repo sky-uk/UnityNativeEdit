@@ -32,6 +32,7 @@
 
 
 using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -49,6 +50,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	}
 
 	public bool	withDoneButton = true;
+	public event Action iosReturnPressed; 
 
 	private bool	bNativeEditCreated = false;
 
@@ -65,6 +67,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	private static string MSG_TEXT_CHANGE = "TextChange";
 	private static string MSG_TEXT_END_EDIT = "TextEndEdit";
 	private static string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	private static string MSG_RETURN_PRESSED = "ReturnPressed";
 
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
 	{
@@ -201,6 +204,11 @@ public class NativeEditBox : PluginMsgReceiver {
 		{
 			string text = jsonMsg.GetString("text");
 			this.onTextEditEnd(text);
+		}
+		else if (msg.Equals(MSG_RETURN_PRESSED))
+		{
+			if (iosReturnPressed != null)
+				iosReturnPressed();
 		}
 	}
 

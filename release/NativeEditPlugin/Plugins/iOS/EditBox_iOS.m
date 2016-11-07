@@ -464,6 +464,16 @@ bool approxEqualFloat(float x, float y)
     [self onTextEditEnd:textView.text];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (![editView isFirstResponder]) return YES;
+    JsonObject* jsonToUnity = [[JsonObject alloc] init];
+    
+    [jsonToUnity setString:@"msg" value:MSG_RETURN_PRESSED];
+    [self sendJsonToUnity:jsonToUnity];
+    return YES;
+}
+
 -(void) textFieldDidChange :(UITextField *)theTextField{
     [self onTextChange:theTextField.text];
 }
