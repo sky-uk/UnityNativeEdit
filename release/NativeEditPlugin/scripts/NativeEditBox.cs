@@ -56,6 +56,7 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	private InputField	objUnityInput;
 	private Text		objUnityText;
+	private bool focusOnCreate;
 	
 	private static string MSG_CREATE = "CreateEdit";
 	private static string MSG_REMOVE = "RemoveEdit";
@@ -254,6 +255,9 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);
+
+		if (focusOnCreate)
+			SetFocusNative(true);
 	}
 
 	public void SetTextNative(string newText)
@@ -306,6 +310,8 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	public void SetFocusNative(bool bFocus)
 	{
+		if (!bNativeEditCreated)
+			focusOnCreate = bFocus;
 		JsonObject jsonMsg = new JsonObject();
 		
 		jsonMsg["msg"] = MSG_SET_FOCUS;
