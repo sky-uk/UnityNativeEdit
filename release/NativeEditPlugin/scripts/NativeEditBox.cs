@@ -54,6 +54,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	public bool	withDoneButton = true;
 	public ReturnKeyType iosReturnKeyType;
 	public event Action iosReturnPressed; 
+	public bool updateRectEveryFrame;
 
 	private bool	bNativeEditCreated = false;
 
@@ -155,6 +156,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	// Update is called once per frame
 	void Update () {
 		this.UpdateForceKeyeventForAndroid();
+		if (updateRectEveryFrame && this.objUnityInput != null && bNativeEditCreated)
+		{
+			SetRectNative(this.objUnityText.rectTransform);
+		}
 	}
 	
 	private void PrepareNativeEdit()
