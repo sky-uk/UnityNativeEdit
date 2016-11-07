@@ -146,8 +146,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
-		
-		objUnityInput.placeholder.enabled = false;
+
 		objUnityText.enabled = false;
 		objUnityInput.enabled = false;
 		#endif
@@ -166,11 +165,15 @@ public class NativeEditBox : PluginMsgReceiver {
 			Debug.LogErrorFormat("No InputField found {0} NativeEditBox Error", this.name);
 			throw new MissingComponentException();
 		}
-		
-		Graphic placeHolder = objUnityInput.placeholder;
-		objUnityText = objUnityInput.textComponent;
-		
-		mConfig.placeHolder = placeHolder.GetComponent<Text>().text;
+		objUnityText = objUnityInput.textComponent;		
+
+		// There seems to be an issue with the native placeholder where both the native and Unity placeholders are
+		// displayed at the same time if some input text is entered and then deleted.
+		//
+		// Currently we are using the Unity placeholder, which only gets hidden when the user starts typing (not on
+		// focus). This is what we want for our usecase, but this should be revisited if standard placeholder behaviour
+		// is wanted.
+		mConfig.placeHolder = "";
 		mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
