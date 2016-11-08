@@ -49,8 +49,12 @@ public class NativeEditBox : PluginMsgReceiver {
 		public string placeHolder;
 	}
 
+	public enum ReturnKeyType { Default, Next, Done };
+
 	public bool	withDoneButton = true;
+	public ReturnKeyType iosReturnKeyType;
 	public event Action iosReturnPressed; 
+	public bool updateRectEveryFrame;
 
 	private bool	bNativeEditCreated = false;
 
@@ -143,8 +147,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
-		
-		objUnityInput.placeholder.enabled = false;
+
+		objUnityInput.placeholder.gameObject.SetActive(false);
 		objUnityText.enabled = false;
 		objUnityInput.enabled = false;
 		#endif
@@ -153,6 +157,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	// Update is called once per frame
 	void Update () {
 		this.UpdateForceKeyeventForAndroid();
+		if (updateRectEveryFrame && this.objUnityInput != null && bNativeEditCreated)
+		{
+			SetRectNative(this.objUnityText.rectTransform);
+		}
 	}
 	
 	private void PrepareNativeEdit()
@@ -252,6 +260,21 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["withDoneButton"] = this.withDoneButton;
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
 		jsonMsg["multiline"] = mConfig.multiline;
+
+		switch (iosReturnKeyType)
+		{
+			case ReturnKeyType.Next:
+				jsonMsg["return_key_type"] = "Next";
+				break;
+
+			case ReturnKeyType.Done:
+				jsonMsg["return_key_type"] = "Done";
+				break;
+
+			default:
+				jsonMsg["return_key_type"] = "Default";
+				break;
+		}
 
 		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);
