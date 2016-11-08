@@ -8,6 +8,7 @@
 UIViewController* unityViewController = nil;
 NSMutableDictionary*    dictEditBox = nil;
 EditBoxHoldView*         viewPlugin = nil;
+NSString* placeholder = nil;
 
 #define DEF_PixelPerPoint 2.2639f // 72 points per inch. iPhone 163DPI
 char    g_unityName[64];
@@ -179,7 +180,7 @@ bool approxEqualFloat(float x, float y)
 
 -(void) create:(JsonObject*)json
 {
-    NSString* placeholder = [json getString:@"placeHolder"];
+    placeholder = [json getString:@"placeHolder"];
     
     NSString* font = [json getString:@"font"];
     float fontSize = [json getFloat:@"fontSize"];
@@ -306,6 +307,17 @@ bool approxEqualFloat(float x, float y)
         keyboardDoneButtonView = nil;
     }
     
+    UIReturnKeyType returnKeyType = UIReturnKeyDefault;
+    NSString* returnKeyTypeString = [json getString:@"return_key_type"];
+    if ([returnKeyTypeString isEqualToString:@"Next"])
+    {
+        returnKeyType = UIReturnKeyNext;
+    }
+    else if ([returnKeyTypeString isEqualToString:@"Done"])
+    {
+        returnKeyType = UIReturnKeyDone;
+    }
+    
     if (multiline)
     {
         PlaceholderTextView* textView = [[PlaceholderTextView alloc] initWithFrame:CGRectMake(x, y, width, height)];
@@ -319,7 +331,7 @@ bool approxEqualFloat(float x, float y)
         
         textView.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
         textView.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
-        textView.returnKeyType = UIReturnKeyDefault;
+        textView.returnKeyType = returnKeyType;
         textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo  ;
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
@@ -344,7 +356,7 @@ bool approxEqualFloat(float x, float y)
         textField.text = @"";
         textField.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
         textField.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
-        textField.returnKeyType = UIReturnKeyDefault;
+        textField.returnKeyType = returnKeyType;
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
@@ -464,12 +476,27 @@ bool approxEqualFloat(float x, float y)
     [self onTextEditEnd:textView.text];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (![editView isFirstResponder]) return YES;
+    JsonObject* jsonToUnity = [[JsonObject alloc] init];
+    
+    [jsonToUnity setString:@"msg" value:MSG_RETURN_PRESSED];
+    [self sendJsonToUnity:jsonToUnity];
+    return YES;
+}
+
 -(void) textFieldDidChange :(UITextField *)theTextField{
     [self onTextChange:theTextField.text];
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    textField.placeholder = nil;
+}
+
 -(void) textFieldDidEndEditing:(UITextField *)textField
 {
+    textField.placeholder = placeholder;
     [self onTextEditEnd:textField.text];
 }
 
