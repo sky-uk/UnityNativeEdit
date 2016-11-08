@@ -32,6 +32,7 @@
 
 
 using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -48,7 +49,12 @@ public class NativeEditBox : PluginMsgReceiver {
 		public string placeHolder;
 	}
 
+	public enum ReturnKeyType { Default, Next, Done };
+
 	public bool	withDoneButton = true;
+	public ReturnKeyType iosReturnKeyType;
+	public event Action iosReturnPressed; 
+	public bool updateRectEveryFrame;
 
 	private bool	bNativeEditCreated = false;
 
@@ -66,6 +72,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	private static string MSG_TEXT_CHANGE = "TextChange";
 	private static string MSG_TEXT_END_EDIT = "TextEndEdit";
 	private static string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	private static string MSG_RETURN_PRESSED = "ReturnPressed";
 
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
 	{
@@ -140,8 +147,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
-		
-		objUnityInput.placeholder.enabled = false;
+
+		objUnityInput.placeholder.gameObject.SetActive(false);
 		objUnityText.enabled = false;
 		objUnityInput.enabled = false;
 		#endif
@@ -150,6 +157,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	// Update is called once per frame
 	void Update () {
 		this.UpdateForceKeyeventForAndroid();
+		if (updateRectEveryFrame && this.objUnityInput != null && bNativeEditCreated)
+		{
+			SetRectNative(this.objUnityText.rectTransform);
+		}
 	}
 	
 	private void PrepareNativeEdit()
@@ -203,6 +214,11 @@ public class NativeEditBox : PluginMsgReceiver {
 			string text = jsonMsg.GetString("text");
 			this.onTextEditEnd(text);
 		}
+		else if (msg.Equals(MSG_RETURN_PRESSED))
+		{
+			if (iosReturnPressed != null)
+				iosReturnPressed();
+		}
 	}
 
 	private bool CheckErrorJsonRet(JsonObject jsonRet)
@@ -244,6 +260,21 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["withDoneButton"] = this.withDoneButton;
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
 		jsonMsg["multiline"] = mConfig.multiline;
+
+		switch (iosReturnKeyType)
+		{
+			case ReturnKeyType.Next:
+				jsonMsg["return_key_type"] = "Next";
+				break;
+
+			case ReturnKeyType.Done:
+				jsonMsg["return_key_type"] = "Done";
+				break;
+
+			default:
+				jsonMsg["return_key_type"] = "Default";
+				break;
+		}
 
 		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);
