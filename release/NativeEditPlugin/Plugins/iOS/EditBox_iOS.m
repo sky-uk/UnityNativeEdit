@@ -336,6 +336,8 @@ bool approxEqualFloat(float x, float y)
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
         textView.delegate = self;
+        if (keyType == UIKeyboardTypeEmailAddress)
+            textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
         
         [textView setSecureTextEntry:password];
         if (keyboardDoneButtonView != nil) textView.inputAccessoryView = keyboardDoneButtonView;
@@ -362,6 +364,8 @@ bool approxEqualFloat(float x, float y)
         textField.contentHorizontalAlignment = halign;
         textField.placeholder = placeholder;
         textField.delegate = self;
+        if (keyType == UIKeyboardTypeEmailAddress)
+            textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         
         [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [textField setSecureTextEntry:password];
