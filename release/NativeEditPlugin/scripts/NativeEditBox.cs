@@ -114,6 +114,8 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	protected new void OnDestroy()
 	{
+		RemoveNative();
+
 		base.OnDestroy();
 	}
 
