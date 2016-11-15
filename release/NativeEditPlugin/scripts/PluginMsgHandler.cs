@@ -71,9 +71,20 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static string MSG_SHOW_KEYBOARD = "ShowKeyboard";
 	private static string DEFAULT_NAME = "NativeEditPluginHandler";
 	private static bool   ENABLE_WRITE_LOG = false;
+	private static GameObject instance;
 
 	void Awake()
 	{
+		// Don't destroy on load and make sure there is only one instance existing. Without this the
+		// events didn't seem to work after a scene reload.
+		if (instance != null)
+		{
+			Destroy(gameObject);
+			return;
+		}
+		instance = gameObject;
+		DontDestroyOnLoad(gameObject);
+
 		int tempRandom = (int) UnityEngine.Random.Range(0, 10000.0f);
 		this.name = DEFAULT_NAME + tempRandom.ToString();
 
