@@ -169,8 +169,15 @@ public class PluginMsgHandler : MonoBehaviour {
 		else
 		{
 			int nSenderId = jsonMsg.GetInt("senderId");
-			PluginMsgReceiver receiver = PluginMsgHandler.getInst().GetReceiver(nSenderId);
-			receiver.OnPluginMsgDirect(jsonMsg);
+
+			// In some cases the receiver might be already removed, for example if a button is pressed
+			// that will destoy the receiver while the input field is focused an end editing message
+			// will be sent from the plugin after the receiver is already destroyed on Unity side.
+			if (m_dictReceiver.ContainsKey(nSenderId))
+			{
+				PluginMsgReceiver receiver = PluginMsgHandler.getInst().GetReceiver(nSenderId);
+				receiver.OnPluginMsgDirect(jsonMsg);
+			}
 		}
 	}
 	
