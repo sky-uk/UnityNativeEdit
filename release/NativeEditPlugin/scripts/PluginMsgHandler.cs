@@ -244,7 +244,7 @@ public class PluginMsgHandler : MonoBehaviour {
 	
 	public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
 	{
-		#if UNITY_EDITOR
+		#if UNITY_EDITOR || UNITY_STANDALONE
 		return new JsonObject();
 		#endif
 
