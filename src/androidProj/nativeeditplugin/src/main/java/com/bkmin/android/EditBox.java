@@ -224,7 +224,9 @@ public class EditBox {
             edit.setLayoutParams(lp);
             edit.setPadding(0, 0, 0, 0);
 
-            int editInputType = edit.getInputType();
+            edit.setSingleLine(!multiline);
+
+            int editInputType = 0;
             switch (contentType) {
                 case "Standard" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
                 case "Autocorrected" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT; break;
@@ -232,8 +234,8 @@ public class EditBox {
                 case "DecimalNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL; break;
                 case "Alphanumeric" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
                 case "Name" : editInputType |= InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
-                case "EmailAddress" : editInputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
-                case "Password" : editInputType |= InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
+                case "EmailAddress" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
+                case "Password" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
                 case "Pin" : editInputType |= InputType.TYPE_TEXT_VARIATION_PHONETIC; break;
 
                 case "Custom" : // We need more details
@@ -318,7 +320,6 @@ public class EditBox {
 
             Typeface tf = Typeface.create(font, Typeface.NORMAL);
             edit.setTypeface(tf);
-            edit.setSingleLine(!multiline);
 
             final EditBox eb = this;
 
