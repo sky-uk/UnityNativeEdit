@@ -231,7 +231,7 @@ public class EditBox {
                 case "DecimalNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL; break;
                 case "Alphanumeric" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
                 case "Name" : editInputType |= InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
-                case "EmailAddress" : editInputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+                case "EmailAddress" : editInputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
                 case "Password" : editInputType |= InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
                 case "Pin" : editInputType |= InputType.TYPE_TEXT_VARIATION_PHONETIC; break;
 
