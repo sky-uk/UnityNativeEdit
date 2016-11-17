@@ -214,6 +214,10 @@ public class EditBox {
             boolean multiline = jsonObj.getBoolean("multiline");
 
             edit = new EditText(NativeEditPlugin.unityActivity.getApplicationContext());
+
+            // It's important to set this first as it resets some things, for example character hiding if content type is password.
+            edit.setSingleLine(!multiline);
+
             edit.setId(0);
             edit.setText("");
             edit.setHint(placeHolder);
@@ -223,8 +227,6 @@ public class EditBox {
             lp.setMargins(rect.left, rect.top, 0, 0);
             edit.setLayoutParams(lp);
             edit.setPadding(0, 0, 0, 0);
-
-            edit.setSingleLine(!multiline);
 
             int editInputType = 0;
             switch (contentType) {
