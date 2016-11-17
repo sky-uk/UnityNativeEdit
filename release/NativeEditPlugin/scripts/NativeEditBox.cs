@@ -336,7 +336,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	public void SetFocusNative(bool bFocus)
 	{
 		if (!bNativeEditCreated)
+		{
 			focusOnCreate = bFocus;
+			return;
+		}
 		JsonObject jsonMsg = new JsonObject();
 		
 		jsonMsg["msg"] = MSG_SET_FOCUS;
