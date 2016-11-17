@@ -53,7 +53,7 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	public bool	withDoneButton = true;
 	public ReturnKeyType iosReturnKeyType;
-	public event Action iosReturnPressed; 
+	public event Action returnPressed; 
 	public bool updateRectEveryFrame;
 
 	private bool	bNativeEditCreated = false;
@@ -218,8 +218,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		}
 		else if (msg.Equals(MSG_RETURN_PRESSED))
 		{
-			if (iosReturnPressed != null)
-				iosReturnPressed();
+			if (returnPressed != null)
+				returnPressed();
 		}
 	}
 

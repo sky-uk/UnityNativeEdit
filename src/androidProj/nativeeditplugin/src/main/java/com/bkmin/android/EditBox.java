@@ -27,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /// UnityEditBox Plugin
 /// Written by bkmin 2015/5 (kmin.bang@gmail.com)
@@ -49,6 +50,7 @@ public class EditBox {
     private static String MSG_TEXT_CHANGE = "TextChange";
     private static String MSG_TEXT_END_EDIT = "TextEndEdit";
     private static String MSG_ANDROID_KEY_DOWN = "AndroidKeyDown";
+    private static String MSG_RETURN_PRESSED = "ReturnPressed";
 
     public static JSONObject makeJsonRet(boolean isError, String strError)
     {
@@ -352,6 +354,25 @@ public class EditBox {
                                           int before, int count) {
                     // TODO Auto-generated method stub
 
+                }
+            });
+
+            edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                        JSONObject jsonToUnity = new JSONObject();
+                        try
+                        {
+                            jsonToUnity.put("msg", MSG_RETURN_PRESSED);
+                        }
+                        catch(JSONException e) {}
+
+                        eb.SendJsonToUnity(jsonToUnity);
+                        return true;
+                    }
+                    return false;
                 }
             });
 
