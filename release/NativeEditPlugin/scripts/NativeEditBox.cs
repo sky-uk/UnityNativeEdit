@@ -52,7 +52,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	public enum ReturnKeyType { Default, Next, Done };
 
 	public bool	withDoneButton = true;
-	public ReturnKeyType iosReturnKeyType;
+	public ReturnKeyType returnKeyType;
 	public event Action returnPressed; 
 	public bool updateRectEveryFrame;
 
@@ -263,7 +263,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
 		jsonMsg["multiline"] = mConfig.multiline;
 
-		switch (iosReturnKeyType)
+		switch (returnKeyType)
 		{
 			case ReturnKeyType.Next:
 				jsonMsg["return_key_type"] = "Next";

@@ -207,6 +207,7 @@ public class EditBox {
             String inputType = jsonObj.optString("inputType");
             String keyboardType = jsonObj.optString("keyboardType");
             String characterValidation = jsonObj.optString("characterValidation");
+            String returnKeyType = jsonObj.getString("return_key_type");
 
             String alignment = jsonObj.getString("align");
             boolean withDoneButton = jsonObj.getBoolean("withDoneButton");
@@ -298,6 +299,16 @@ public class EditBox {
             {
                 gravity = Gravity.BOTTOM | Gravity.RIGHT;
             }
+
+            int imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+            if (returnKeyType.equals("Next")) {
+                imeOptions |= EditorInfo.IME_ACTION_NEXT;
+            }
+            else if (returnKeyType.equals("Done")) {
+                imeOptions |= EditorInfo.IME_ACTION_NEXT;
+            }
+            edit.setImeOptions(imeOptions);
+
             edit.setGravity(gravity);
 
 
@@ -360,8 +371,7 @@ public class EditBox {
             edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-
+                    if ((actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
                         JSONObject jsonToUnity = new JSONObject();
                         try
                         {
@@ -375,8 +385,6 @@ public class EditBox {
                     return false;
                 }
             });
-
-            edit.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
 
             layout.setFocusableInTouchMode(true);
             layout.setClickable(true);
