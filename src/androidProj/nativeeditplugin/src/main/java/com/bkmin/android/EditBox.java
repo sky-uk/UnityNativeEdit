@@ -238,7 +238,7 @@ public class EditBox {
                 case "Name" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
                 case "EmailAddress" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
                 case "Password" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
-                case "Pin" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PHONETIC; break;
+                case "Pin" : editInputType |= InputType.TYPE_CLASS_PHONE; break;
 
                 case "Custom" : // We need more details
                     switch (keyboardType) {
