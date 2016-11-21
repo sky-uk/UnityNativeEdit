@@ -23,9 +23,11 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /// UnityEditBox Plugin
 /// Written by bkmin 2015/5 (kmin.bang@gmail.com)
@@ -48,6 +50,7 @@ public class EditBox {
     private static String MSG_TEXT_CHANGE = "TextChange";
     private static String MSG_TEXT_END_EDIT = "TextEndEdit";
     private static String MSG_ANDROID_KEY_DOWN = "AndroidKeyDown";
+    private static String MSG_RETURN_PRESSED = "ReturnPressed";
 
     public static JSONObject makeJsonRet(boolean isError, String strError)
     {
@@ -109,7 +112,7 @@ public class EditBox {
         InputMethodManager imm = (InputMethodManager) NativeEditPlugin.unityActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (isShow)
         {
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            imm.showSoftInput(edit, InputMethodManager.SHOW_FORCED);
         }
         else
         {
@@ -204,12 +207,17 @@ public class EditBox {
             String inputType = jsonObj.optString("inputType");
             String keyboardType = jsonObj.optString("keyboardType");
             String characterValidation = jsonObj.optString("characterValidation");
+            String returnKeyType = jsonObj.getString("return_key_type");
 
             String alignment = jsonObj.getString("align");
             boolean withDoneButton = jsonObj.getBoolean("withDoneButton");
             boolean multiline = jsonObj.getBoolean("multiline");
 
             edit = new EditText(NativeEditPlugin.unityActivity.getApplicationContext());
+
+            // It's important to set this first as it resets some things, for example character hiding if content type is password.
+            edit.setSingleLine(!multiline);
+
             edit.setId(0);
             edit.setText("");
             edit.setHint(placeHolder);
@@ -220,17 +228,17 @@ public class EditBox {
             edit.setLayoutParams(lp);
             edit.setPadding(0, 0, 0, 0);
 
-            int editInputType = edit.getInputType();
+            int editInputType = 0;
             switch (contentType) {
                 case "Standard" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
                 case "Autocorrected" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT; break;
                 case "IntegerNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL; break;
                 case "DecimalNumber" : editInputType |= InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL; break;
                 case "Alphanumeric" : editInputType |= InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_VARIATION_NORMAL; break; // This is default behaviour
-                case "Name" : editInputType |= InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
-                case "EmailAddress" : editInputType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
-                case "Password" : editInputType |= InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
-                case "Pin" : editInputType |= InputType.TYPE_TEXT_VARIATION_PHONETIC; break;
+                case "Name" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME; break;
+                case "EmailAddress" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS; break;
+                case "Password" : editInputType |= InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD; break;
+                case "Pin" : editInputType |= InputType.TYPE_CLASS_PHONE; break;
 
                 case "Custom" : // We need more details
                     switch (keyboardType) {
@@ -295,6 +303,16 @@ public class EditBox {
             {
                 gravity = Gravity.BOTTOM | Gravity.RIGHT;
             }
+
+            int imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+            if (returnKeyType.equals("Next")) {
+                imeOptions |= EditorInfo.IME_ACTION_NEXT;
+            }
+            else if (returnKeyType.equals("Done")) {
+                imeOptions |= EditorInfo.IME_ACTION_NEXT;
+            }
+            edit.setImeOptions(imeOptions);
+
             edit.setGravity(gravity);
 
 
@@ -304,7 +322,6 @@ public class EditBox {
 
             Typeface tf = Typeface.create(font, Typeface.NORMAL);
             edit.setTypeface(tf);
-            edit.setSingleLine(!multiline);
 
             final EditBox eb = this;
 
@@ -351,6 +368,24 @@ public class EditBox {
                                           int before, int count) {
                     // TODO Auto-generated method stub
 
+                }
+            });
+
+            edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if ((actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
+                        JSONObject jsonToUnity = new JSONObject();
+                        try
+                        {
+                            jsonToUnity.put("msg", MSG_RETURN_PRESSED);
+                        }
+                        catch(JSONException e) {}
+
+                        eb.SendJsonToUnity(jsonToUnity);
+                        return true;
+                    }
+                    return false;
                 }
             });
 
