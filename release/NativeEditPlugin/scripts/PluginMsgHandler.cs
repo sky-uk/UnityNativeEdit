@@ -69,6 +69,27 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static bool   ENABLE_WRITE_LOG = false;
 	private static GameObject instance;
 
+	private bool IsEditor {
+		get {
+			bool isEditor = false;
+			#if UNITY_EDITOR
+			isEditor = true;
+			#endif
+			return isEditor;
+		}
+	}
+
+	private bool IsStandalone {
+		get {
+			bool isStandalone = false;
+			#if UNITY_STANDALONE
+			isStandalone = true;
+			#endif
+			return isStandalone;
+		}
+	}
+
+
 	void Awake()
 	{
 		// Don't destroy on load and make sure there is only one instance existing. Without this the
@@ -208,12 +229,8 @@ public class PluginMsgHandler : MonoBehaviour {
 
 	private static AndroidJavaClass smAndroid;
 	public void InitializeHandler()
-	{
-		bool isEditor = false;
-		#if UNITY_EDITOR
-		isEditor = true;
-		#endif
-		if (isEditor || sPluginInitialized) return;
+	{	
+		if (IsEditor || sPluginInitialized) return;
 
 		smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
 		smAndroid.CallStatic("InitPluginMsgHandler", this.name);
@@ -221,12 +238,8 @@ public class PluginMsgHandler : MonoBehaviour {
 	}
 	
 	public void FinalizeHandler()
-	{
-		bool isEditor = false;
-		#if UNITY_EDITOR
-		isEditor = true;
-		#endif
-		if (!isEditor)
+	{	
+		if (!IsEditor)
 			smAndroid.CallStatic("ClosePluginMsgHandler");
 	}
 
@@ -242,13 +255,8 @@ public class PluginMsgHandler : MonoBehaviour {
 
 	
 	public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
-	{
-		bool isEditorOrStandalone = false;
-		#if UNITY_EDITOR || UNITY_STANDALONE
-		isEditorOrStandalone = true;
-		#endif
-
-		if (isEditorOrStandalone)
+	{	
+		if (IsEditor || IsStandalone)
 			return new JsonObject();
 
 		jsonMsg["senderId"] = nSenderId;
