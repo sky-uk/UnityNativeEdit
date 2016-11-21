@@ -43,10 +43,6 @@ public abstract class PluginMsgReceiver : MonoBehaviour
 		PluginMsgHandler.getInst().RemoveReceiver(nReceiverId);
 	}
 
-	protected void Update()
-	{
-	}
-
 	protected JsonObject SendPluginMsg(JsonObject jsonMsg)
 	{
 		return PluginMsgHandler.getInst().SendMsgToPlugin(nReceiverId, jsonMsg);
@@ -213,10 +209,11 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static AndroidJavaClass smAndroid;
 	public void InitializeHandler()
 	{
+		bool isEditor = false;
 		#if UNITY_EDITOR
-		return;
+		isEditor = true;
 		#endif
-		if (sPluginInitialized) return;
+		if (isEditor || sPluginInitialized) return;
 
 		smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
 		smAndroid.CallStatic("InitPluginMsgHandler", this.name);
@@ -225,10 +222,12 @@ public class PluginMsgHandler : MonoBehaviour {
 	
 	public void FinalizeHandler()
 	{
+		bool isEditor = false;
 		#if UNITY_EDITOR
-		return;
+		isEditor = true;
 		#endif
-		smAndroid.CallStatic("ClosePluginMsgHandler");
+		if (!isEditor)
+			smAndroid.CallStatic("ClosePluginMsgHandler");
 	}
 
 	#else
@@ -244,9 +243,13 @@ public class PluginMsgHandler : MonoBehaviour {
 	
 	public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
 	{
+		bool isEditorOrStandalone = false;
 		#if UNITY_EDITOR || UNITY_STANDALONE
-		return new JsonObject();
+		isEditorOrStandalone = true;
 		#endif
+
+		if (isEditorOrStandalone)
+			return new JsonObject();
 
 		jsonMsg["senderId"] = nSenderId;
 		string strJson = jsonMsg.Serialize();
