@@ -309,7 +309,7 @@ public class EditBox {
                 imeOptions |= EditorInfo.IME_ACTION_NEXT;
             }
             else if (returnKeyType.equals("Done")) {
-                imeOptions |= EditorInfo.IME_ACTION_NEXT;
+                imeOptions |= EditorInfo.IME_ACTION_DONE;
             }
             edit.setImeOptions(imeOptions);
 
