@@ -71,21 +71,21 @@ public class PluginMsgHandler : MonoBehaviour {
 
 	private bool IsEditor {
 		get {
-			bool isEditor = false;
 			#if UNITY_EDITOR
-			isEditor = true;
+			return true;
+			#else
+			return false;
 			#endif
-			return isEditor;
 		}
 	}
 
 	private bool IsStandalone {
-		get {
-			bool isStandalone = false;
+		get {			
 			#if UNITY_STANDALONE
-			isStandalone = true;
+			return true;
+			#else
+			return false;
 			#endif
-			return isStandalone;
 		}
 	}
 
