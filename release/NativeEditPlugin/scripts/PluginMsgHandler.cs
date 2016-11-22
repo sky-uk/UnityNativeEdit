@@ -55,7 +55,10 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static PluginMsgHandler inst;
 	public 	static PluginMsgHandler getInst() {		return inst; }
 
-	private static bool 	sPluginInitialized = false;
+	#if UNITY_IPHONE || UNITY_ANDROID
+	private static bool sPluginInitialized = false;
+	#endif
+
 	private int	snCurReceiverIdx = 0;
 	private Dictionary<int, PluginMsgReceiver>		m_dictReceiver = new Dictionary<int, PluginMsgReceiver>();
 	
@@ -207,11 +210,8 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static extern void _iOS_ClosePluginMsgHandler();	
 
 	public void InitializeHandler()
-	{
-		#if UNITY_EDITOR
-		return;
-		#endif
-		if (sPluginInitialized) return;
+	{		
+		if (IsEditor || sPluginInitialized) return;
 
 		_iOS_InitPluginMsgHandler(this.name);
 		sPluginInitialized = true;
@@ -219,10 +219,9 @@ public class PluginMsgHandler : MonoBehaviour {
 	
 	public void FinalizeHandler()
 	{
-		#if UNITY_EDITOR
-		return;
-		#endif
-		_iOS_ClosePluginMsgHandler();
+		if (!IsEditor)
+			_iOS_ClosePluginMsgHandler();
+		
 	}
 
 	#elif UNITY_ANDROID 
@@ -256,20 +255,21 @@ public class PluginMsgHandler : MonoBehaviour {
 	
 	public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
 	{	
-		if (IsEditor || IsStandalone)
+		#if UNITY_EDITOR || UNITY_STANDALONE
 			return new JsonObject();
+		#else
+			jsonMsg["senderId"] = nSenderId;
+			string strJson = jsonMsg.Serialize();
 
-		jsonMsg["senderId"] = nSenderId;
-		string strJson = jsonMsg.Serialize();
+			string strRet = "";
+			#if UNITY_IPHONE
+			strRet = _iOS_SendUnityMsgToPlugin(nSenderId, strJson);
+			#elif UNITY_ANDROID 
+			strRet = smAndroid.CallStatic<string>("SendUnityMsgToPlugin", nSenderId, strJson);
+			#endif
 
-		string strRet = "";
-		#if UNITY_IPHONE
-		strRet = _iOS_SendUnityMsgToPlugin(nSenderId, strJson);
-		#elif UNITY_ANDROID 
-		strRet = smAndroid.CallStatic<string>("SendUnityMsgToPlugin", nSenderId, strJson);
+			JsonObject jsonRet = new JsonObject(strRet);
+			return jsonRet;
 		#endif
-
-		JsonObject jsonRet = new JsonObject(strRet);
-		return jsonRet;
 	}
 }
