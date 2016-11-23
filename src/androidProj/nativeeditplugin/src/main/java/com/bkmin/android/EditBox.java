@@ -43,7 +43,6 @@ public class EditBox {
     private static String MSG_CREATE = "CreateEdit";
     private static String MSG_REMOVE = "RemoveEdit";
     private static String MSG_SET_TEXT = "SetText";
-    private static String MSG_GET_TEXT = "GetText";
     private static String MSG_SET_RECT = "SetRect";
     private static String MSG_SET_FOCUS = "SetFocus";
     private static String MSG_SET_VISIBLE = "SetVisible";
@@ -137,11 +136,6 @@ public class EditBox {
             {
                 String text = jsonMsg.getString("text");
                 this.SetText(text);
-            }
-            else if (msg.equals(MSG_GET_TEXT))
-            {
-                String text = this.GetText();
-                jsonRet.put("text", text);
             }
             else if (msg.equals(MSG_SET_RECT))
             {

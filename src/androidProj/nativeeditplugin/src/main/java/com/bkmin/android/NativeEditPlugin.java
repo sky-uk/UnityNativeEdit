@@ -123,33 +123,13 @@ public class NativeEditPlugin {
         UnityPlayer.UnitySendMessage(unityName, "OnMsgFromPlugin", jsonMsg.toString());
     }
 
-    static JSONObject jsonStaticRet = null;
     public static String SendUnityMsgToPlugin(final int nSenderId, final String jsonMsg) {
         final Runnable task = new Runnable() {
             public void run() {
-                jsonStaticRet = EditBox.processRecvJsonMsg(nSenderId, jsonMsg);
-                synchronized (this) {
-                    this.notify();
-                }
+                EditBox.processRecvJsonMsg(nSenderId, jsonMsg);
             }
         };
-        synchronized (task) {
-            unityActivity.runOnUiThread(task);
-            try
-            {
-                task.wait();
-            }
-            catch ( InterruptedException e )
-            {
-                e.printStackTrace();
-            }
-        }
-
-        if (jsonStaticRet != null) {
-            return jsonStaticRet.toString();
-        }
-        else {
-            return "";
-        }
+        unityActivity.runOnUiThread(task);
+        return new JSONObject().toString();
     }
 }
