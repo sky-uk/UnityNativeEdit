@@ -78,32 +78,6 @@ public class NativeEditPlugin {
                         RelativeLayout.LayoutParams.MATCH_PARENT);
                 topViewGroup.addView(mainLayout, rlp);
                 SetInitialized();
-
-                rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-
-                        Rect r = new Rect();
-                        rootView.getWindowVisibleDisplayFrame(r);
-                        int screenHeight = rootView.getRootView().getHeight();
-
-                        // r.bottom is the position above soft keypad or device button.
-                        // if keypad is shown, the r.bottom is smaller than that before.
-                        keyboardHeight = screenHeight - r.bottom;
-                        boolean bKeyOpen = (keyboardHeight > screenHeight * 0.15);
-
-                        float fKeyHeight = (float) keyboardHeight / (float) screenHeight;
-
-                        JSONObject json = new JSONObject();
-                        try {
-                            json.put("msg", MSG_SHOW_KEYBOARD);
-                            json.put("show", bKeyOpen);
-                            json.put("keyheight", fKeyHeight);
-                        } catch (JSONException e) {
-                        }
-                        SendUnityMessage(json);
-                    }
-                });
                 Log.i(LOG_TAG, "InitEditBoxPlugin okay");
             }
         });
@@ -123,33 +97,13 @@ public class NativeEditPlugin {
         UnityPlayer.UnitySendMessage(unityName, "OnMsgFromPlugin", jsonMsg.toString());
     }
 
-    static JSONObject jsonStaticRet = null;
     public static String SendUnityMsgToPlugin(final int nSenderId, final String jsonMsg) {
         final Runnable task = new Runnable() {
             public void run() {
-                jsonStaticRet = EditBox.processRecvJsonMsg(nSenderId, jsonMsg);
-                synchronized (this) {
-                    this.notify();
-                }
+                EditBox.processRecvJsonMsg(nSenderId, jsonMsg);
             }
         };
-        synchronized (task) {
-            unityActivity.runOnUiThread(task);
-            try
-            {
-                task.wait();
-            }
-            catch ( InterruptedException e )
-            {
-                e.printStackTrace();
-            }
-        }
-
-        if (jsonStaticRet != null) {
-            return jsonStaticRet.toString();
-        }
-        else {
-            return "";
-        }
+        unityActivity.runOnUiThread(task);
+        return new JSONObject().toString();
     }
 }
