@@ -391,6 +391,10 @@ public class NativeEditBox : PluginMsgReceiver {
 					{
 						this.ForceSendKeydown_Android("enter");
 					}
+					else
+					{
+						this.ForceSendKeydown_Android(Input.inputString);
+					}
 				}
 			}
 		}	
