@@ -216,9 +216,10 @@ public class PluginMsgHandler : MonoBehaviour {
 		#if UNITY_EDITOR
 		return;
 		#endif
-		if (sPluginInitialized) return;
-
-		smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
+		// Reinitialization was made possible on Android to be able to use as a workaround in an issue where the
+		// NativeEditBox text would be hidden after using Unity's Handheld.PlayFullScreenMovie().
+		if (smAndroid == null)
+			smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
 		smAndroid.CallStatic("InitPluginMsgHandler", this.name);
 		sPluginInitialized = true;
 	}
