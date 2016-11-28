@@ -387,9 +387,13 @@ public class NativeEditBox : PluginMsgReceiver {
 			{
 				foreach(char c in Input.inputString)
 				{
-					if (c == "\n"[0])
+					if (c == '\n')
 					{
 						this.ForceSendKeydown_Android("enter");
+					}
+					else
+					{
+						this.ForceSendKeydown_Android(Input.inputString);
 					}
 				}
 			}

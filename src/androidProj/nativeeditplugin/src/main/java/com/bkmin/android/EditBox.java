@@ -463,6 +463,7 @@ public class EditBox {
         if (!this.isFocused()) return;
 
         // Need to force fire key event of backspace and enter because Unity eats them and never return back to plugin.
+        // Same happens on number keys on top of the keyboard with Google Keyboard on password fields.
         int keyCode = -1;
         if (strKey.equalsIgnoreCase("backspace"))
         {
@@ -471,6 +472,46 @@ public class EditBox {
         else if (strKey.equalsIgnoreCase("enter"))
         {
             keyCode = KeyEvent.KEYCODE_ENTER;
+        }
+        else if (strKey.equals("0"))
+        {
+            keyCode = KeyEvent.KEYCODE_0;
+        }
+        else if (strKey.equals("1"))
+        {
+            keyCode = KeyEvent.KEYCODE_1;
+        }
+        else if (strKey.equals("2"))
+        {
+            keyCode = KeyEvent.KEYCODE_2;
+        }
+        else if (strKey.equals("3"))
+        {
+            keyCode = KeyEvent.KEYCODE_3;
+        }
+        else if (strKey.equals("4"))
+        {
+            keyCode = KeyEvent.KEYCODE_4;
+        }
+        else if (strKey.equals("5"))
+        {
+            keyCode = KeyEvent.KEYCODE_5;
+        }
+        else if (strKey.equals("6"))
+        {
+            keyCode = KeyEvent.KEYCODE_6;
+        }
+        else if (strKey.equals("7"))
+        {
+            keyCode = KeyEvent.KEYCODE_7;
+        }
+        else if (strKey.equals("8"))
+        {
+            keyCode = KeyEvent.KEYCODE_8;
+        }
+        else if (strKey.equals("9"))
+        {
+            keyCode = KeyEvent.KEYCODE_9;
         }
         if (keyCode > 0)
         {

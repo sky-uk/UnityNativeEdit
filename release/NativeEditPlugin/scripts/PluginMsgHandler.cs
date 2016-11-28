@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2015 Kyungmin Bang
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -229,9 +229,12 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static AndroidJavaClass smAndroid;
 	public void InitializeHandler()
 	{	
-		if (IsEditor || sPluginInitialized) return;
+		if (IsEditor) return;
 
-		smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
+		// Reinitialization was made possible on Android to be able to use as a workaround in an issue where the
+		// NativeEditBox text would be hidden after using Unity's Handheld.PlayFullScreenMovie().
+		if (smAndroid == null)
+			smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
 		smAndroid.CallStatic("InitPluginMsgHandler", this.name);
 		sPluginInitialized = true;
 	}
