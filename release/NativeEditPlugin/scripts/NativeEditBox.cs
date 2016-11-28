@@ -194,7 +194,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	private void onTextChange(string newText)
 	{
 		this.objUnityInput.text = newText;
-		if (this.objUnityInput.onValueChange != null) this.objUnityInput.onValueChange.Invoke(newText);
+		if (this.objUnityInput.onValueChanged != null) this.objUnityInput.onValueChanged.Invoke(newText);
 	}
 
 	private void onTextEditEnd(string newText)
