@@ -52,8 +52,8 @@ public class NativeEditBox : PluginMsgReceiver {
 	public enum ReturnKeyType { Default, Next, Done };
 
 	public bool	withDoneButton = true;
-	public ReturnKeyType iosReturnKeyType;
-	public event Action iosReturnPressed; 
+	public ReturnKeyType returnKeyType;
+	public event Action returnPressed; 
 	public bool updateRectEveryFrame;
 
 	private bool	bNativeEditCreated = false;
@@ -218,8 +218,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		}
 		else if (msg.Equals(MSG_RETURN_PRESSED))
 		{
-			if (iosReturnPressed != null)
-				iosReturnPressed();
+			if (returnPressed != null)
+				returnPressed();
 		}
 	}
 
@@ -263,7 +263,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
 		jsonMsg["multiline"] = mConfig.multiline;
 
-		switch (iosReturnKeyType)
+		switch (returnKeyType)
 		{
 			case ReturnKeyType.Next:
 				jsonMsg["return_key_type"] = "Next";
@@ -295,6 +295,10 @@ public class NativeEditBox : PluginMsgReceiver {
 		this.SendPluginMsg(jsonMsg);
 	}
 
+	// GetTextNative won't work on Android, because of threading issues. It should not be needed though,
+	// as the Unity InputField's text property is updated as the native text changes, so it should match
+	// the native text.
+	#if !UNITY_ANDROID
 	public string GetTextNative()
 	{
 		JsonObject jsonMsg = new JsonObject();
@@ -308,6 +312,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		Debug.Log(string.Format("GetTextNative {0}", jsonRet.GetString("text")));
 		return jsonRet.GetString("text");
 	}
+	#endif
 
 	private void RemoveNative()
 	{
@@ -336,7 +341,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	public void SetFocusNative(bool bFocus)
 	{
 		if (!bNativeEditCreated)
+		{
 			focusOnCreate = bFocus;
+			return;
+		}
 		JsonObject jsonMsg = new JsonObject();
 		
 		jsonMsg["msg"] = MSG_SET_FOCUS;
