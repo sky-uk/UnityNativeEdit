@@ -383,8 +383,6 @@ public class EditBox {
                 }
             });
 
-            layout.setFocusableInTouchMode(true);
-            layout.setClickable(true);
             layout.addView(edit);
 
         } catch (JSONException e)
