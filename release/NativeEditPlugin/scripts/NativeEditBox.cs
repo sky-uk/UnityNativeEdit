@@ -32,6 +32,7 @@
 
 
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 using System.Collections;
 using UnityEngine.UI;
@@ -55,6 +56,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	public ReturnKeyType returnKeyType;
 	public event Action returnPressed; 
 	public bool updateRectEveryFrame;
+	public UnityEngine.Events.UnityEvent OnReturnPressed;
 
 	private bool	bNativeEditCreated = false;
 
@@ -220,6 +222,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		{
 			if (returnPressed != null)
 				returnPressed();
+			if (OnReturnPressed != null)
+				OnReturnPressed.Invoke();
 		}
 	}
 
