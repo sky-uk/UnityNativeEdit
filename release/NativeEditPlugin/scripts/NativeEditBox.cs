@@ -77,6 +77,13 @@ public class NativeEditBox : PluginMsgReceiver {
 	private const string MSG_RETURN_PRESSED = "ReturnPressed";
 	private const string MSG_GET_TEXT = "GetText";
 
+	public InputField InputField { get { return objUnityInput; } }
+	public string text
+	{
+		get { return objUnityInput.text; }
+		set { objUnityInput.text = value; }
+	}
+
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
 	{
 		Vector3[] corners = new Vector3[4];
