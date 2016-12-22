@@ -33,7 +33,7 @@ public class PluginMsgHandler : MonoBehaviour {
 	private static PluginMsgHandler inst;
 	public 	static PluginMsgHandler getInst() {		return inst; }
 
-	#if UNITY_IPHONE || UNITY_ANDROID
+	#if UNITY_IPHONE
 	private static bool sPluginInitialized = false;
 	#endif
 
@@ -214,7 +214,6 @@ public class PluginMsgHandler : MonoBehaviour {
 		if (smAndroid == null)
 			smAndroid = new AndroidJavaClass("com.bkmin.android.NativeEditPlugin");
 		smAndroid.CallStatic("InitPluginMsgHandler", this.name);
-		sPluginInitialized = true;
 	}
 	
 	public void FinalizeHandler()
