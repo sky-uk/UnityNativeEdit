@@ -29,28 +29,6 @@ using System;
 using System.IO;
 using AOT;
 
-public abstract class PluginMsgReceiver : MonoBehaviour
-{
-	private	int		nReceiverId;
-
-	protected void Start()
-	{
-		nReceiverId = PluginMsgHandler.getInst().RegisterAndGetReceiverId(this);
-	}
-
-	protected void OnDestroy()
-	{
-		PluginMsgHandler.getInst().RemoveReceiver(nReceiverId);
-	}
-
-	protected JsonObject SendPluginMsg(JsonObject jsonMsg)
-	{
-		return PluginMsgHandler.getInst().SendMsgToPlugin(nReceiverId, jsonMsg);
-	}
-
-	public abstract void OnPluginMsgDirect(JsonObject jsonMsg);  
-}
-
 public class PluginMsgHandler : MonoBehaviour {
 	private static PluginMsgHandler inst;
 	public 	static PluginMsgHandler getInst() {		return inst; }
