@@ -64,18 +64,18 @@ public class NativeEditBox : PluginMsgReceiver {
 	private InputField	objUnityInput;
 	private Text		objUnityText;
 	private bool focusOnCreate;
-	
-	private static string MSG_CREATE = "CreateEdit";
-	private static string MSG_REMOVE = "RemoveEdit";
-	private static string MSG_SET_TEXT = "SetText";
-	private static string MSG_GET_TEXT = "GetText";
-	private static string MSG_SET_RECT = "SetRect";
-	private static string MSG_SET_FOCUS = "SetFocus";
-	private static string MSG_SET_VISIBLE = "SetVisible";
-	private static string MSG_TEXT_CHANGE = "TextChange";
-	private static string MSG_TEXT_END_EDIT = "TextEndEdit";
-	private static string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
-	private static string MSG_RETURN_PRESSED = "ReturnPressed";
+
+	private const string MSG_CREATE = "CreateEdit";
+	private const string MSG_REMOVE = "RemoveEdit";
+	private const string MSG_SET_TEXT = "SetText";
+	private const string MSG_SET_RECT = "SetRect";
+	private const string MSG_SET_FOCUS = "SetFocus";
+	private const string MSG_SET_VISIBLE = "SetVisible";
+	private const string MSG_TEXT_CHANGE = "TextChange";
+	private const string MSG_TEXT_END_EDIT = "TextEndEdit";
+	private const string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	private const string MSG_RETURN_PRESSED = "ReturnPressed";
+	private const string MSG_GET_TEXT = "GetText";
 
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
 	{
