@@ -37,6 +37,7 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(InputField))]
 public class NativeEditBox : PluginMsgReceiver {
 	private struct EditBoxConfig
 	{
