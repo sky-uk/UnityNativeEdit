@@ -156,7 +156,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		yield return new WaitForEndOfFrame();
 
 		this.PrepareNativeEdit();
-		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
+		#if (UNITY_IPHONE || UNITY_ANDROID) && !UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
 
@@ -387,7 +387,7 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	void UpdateForceKeyeventForAndroid()
 	{
-		#if UNITY_ANDROID &&!UNITY_EDITOR
+		#if UNITY_ANDROID && !UNITY_EDITOR
 
 		if (Input.anyKeyDown)
 		{
