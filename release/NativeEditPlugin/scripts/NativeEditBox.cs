@@ -300,7 +300,7 @@ public class NativeEditBox : PluginMsgReceiver {
 			SetFocus(true);
 	}
 
-	public void SetTextNative(string newText)
+	private void SetTextNative(string newText)
 	{
 		JsonObject jsonMsg = new JsonObject();
 		
@@ -309,25 +309,6 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		this.SendPluginMsg(jsonMsg);
 	}
-
-	// GetTextNative won't work on Android, because of threading issues. It should not be needed though,
-	// as the Unity InputField's text property is updated as the native text changes, so it should match
-	// the native text.
-	#if !UNITY_ANDROID
-	public string GetTextNative()
-	{
-		JsonObject jsonMsg = new JsonObject();
-		
-		jsonMsg["msg"] = MSG_GET_TEXT;
-		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
-		bool bError = this.CheckErrorJsonRet(jsonRet);
-
-		if (bError) return "";
-
-		Debug.Log(string.Format("GetTextNative {0}", jsonRet.GetString("text")));
-		return jsonRet.GetString("text");
-	}
-	#endif
 
 	private void RemoveNative()
 	{
