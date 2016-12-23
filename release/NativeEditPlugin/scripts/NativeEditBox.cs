@@ -37,6 +37,7 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(InputField))]
 public class NativeEditBox : PluginMsgReceiver {
 	private struct EditBoxConfig
 	{
@@ -63,18 +64,29 @@ public class NativeEditBox : PluginMsgReceiver {
 	private InputField	objUnityInput;
 	private Text		objUnityText;
 	private bool focusOnCreate;
-	
-	private static string MSG_CREATE = "CreateEdit";
-	private static string MSG_REMOVE = "RemoveEdit";
-	private static string MSG_SET_TEXT = "SetText";
-	private static string MSG_GET_TEXT = "GetText";
-	private static string MSG_SET_RECT = "SetRect";
-	private static string MSG_SET_FOCUS = "SetFocus";
-	private static string MSG_SET_VISIBLE = "SetVisible";
-	private static string MSG_TEXT_CHANGE = "TextChange";
-	private static string MSG_TEXT_END_EDIT = "TextEndEdit";
-	private static string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
-	private static string MSG_RETURN_PRESSED = "ReturnPressed";
+
+	private const string MSG_CREATE = "CreateEdit";
+	private const string MSG_REMOVE = "RemoveEdit";
+	private const string MSG_SET_TEXT = "SetText";
+	private const string MSG_SET_RECT = "SetRect";
+	private const string MSG_SET_FOCUS = "SetFocus";
+	private const string MSG_SET_VISIBLE = "SetVisible";
+	private const string MSG_TEXT_CHANGE = "TextChange";
+	private const string MSG_TEXT_END_EDIT = "TextEndEdit";
+	private const string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	private const string MSG_RETURN_PRESSED = "ReturnPressed";
+	private const string MSG_GET_TEXT = "GetText";
+
+	public InputField InputField { get { return objUnityInput; } }
+	public string text
+	{
+		get { return objUnityInput.text; }
+		set
+		{
+			objUnityInput.text = value;
+			SetTextNative(value);
+		}
+	}
 
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
 	{
@@ -108,34 +120,22 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	private EditBoxConfig mConfig;
 
-	void Awake()
+	private void Awake()
 	{
-	//	base.Awake();
-	}
+		objUnityInput = this.GetComponent<InputField>();
+		if (objUnityInput == null)
+		{
+			Debug.LogErrorFormat("No InputField found {0} NativeEditBox Error", this.name);
+			throw new MissingComponentException();
+		}
 
-
-	protected new void OnDestroy()
-	{
-		RemoveNative();
-
-		base.OnDestroy();
-	}
-
-	void OnEnable()
-	{
-		if (bNativeEditCreated) this.SetVisible(true);
-	}
-
-	void OnDisable()
-	{
-		if (bNativeEditCreated) this.SetVisible(false);
+		objUnityText = objUnityInput.textComponent;
 	}
 
 	// Use this for initialization
-	new void Start () {
+	protected override void Start()
+	{
 		base.Start();
-
-		bNativeEditCreated = false;
 
 		// Wait until the end of frame before initializing to ensure that Unity UI layout has been built. We used to
 		// initialize at Start, but that resulted in an invalid RectTransform position and size on the InputField if it
@@ -143,12 +143,31 @@ public class NativeEditBox : PluginMsgReceiver {
 		StartCoroutine(InitializeAtEndOfFrame());
 	}
 
-	IEnumerator InitializeAtEndOfFrame()
+	private void OnEnable()
+	{
+		if (bNativeEditCreated)
+			this.SetVisible(true);
+	}
+
+	private void OnDisable()
+	{
+		if (bNativeEditCreated)
+			this.SetVisible(false);
+	}
+
+	protected override void OnDestroy()
+	{
+		RemoveNative();
+
+		base.OnDestroy();
+	}
+
+	private IEnumerator InitializeAtEndOfFrame()
 	{
 		yield return new WaitForEndOfFrame();
 
 		this.PrepareNativeEdit();
-		#if (UNITY_IPHONE || UNITY_ANDROID) &&!UNITY_EDITOR
+		#if (UNITY_IPHONE || UNITY_ANDROID) && !UNITY_EDITOR
 		this.CreateNativeEdit();
 		this.SetTextNative(this.objUnityText.text);
 
@@ -157,9 +176,9 @@ public class NativeEditBox : PluginMsgReceiver {
 		objUnityInput.enabled = false;
 		#endif
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	private void Update()
+	{
 		this.UpdateForceKeyeventForAndroid();
 		if (updateRectEveryFrame && this.objUnityInput != null && bNativeEditCreated)
 		{
@@ -169,15 +188,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	
 	private void PrepareNativeEdit()
 	{
-		objUnityInput = this.GetComponent<InputField>();
-		if (objUnityInput == null)
-		{
-			Debug.LogErrorFormat("No InputField found {0} NativeEditBox Error", this.name);
-			throw new MissingComponentException();
-		}
-		
 		Graphic placeHolder = objUnityInput.placeholder;
-		objUnityText = objUnityInput.textComponent;
 		
 		mConfig.placeHolder = placeHolder.GetComponent<Text>().text;
 		mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
@@ -286,10 +297,10 @@ public class NativeEditBox : PluginMsgReceiver {
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);
 
 		if (focusOnCreate)
-			SetFocusNative(true);
+			SetFocus(true);
 	}
 
-	public void SetTextNative(string newText)
+	private void SetTextNative(string newText)
 	{
 		JsonObject jsonMsg = new JsonObject();
 		
@@ -298,25 +309,6 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		this.SendPluginMsg(jsonMsg);
 	}
-
-	// GetTextNative won't work on Android, because of threading issues. It should not be needed though,
-	// as the Unity InputField's text property is updated as the native text changes, so it should match
-	// the native text.
-	#if !UNITY_ANDROID
-	public string GetTextNative()
-	{
-		JsonObject jsonMsg = new JsonObject();
-		
-		jsonMsg["msg"] = MSG_GET_TEXT;
-		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
-		bool bError = this.CheckErrorJsonRet(jsonRet);
-
-		if (bError) return "";
-
-		Debug.Log(string.Format("GetTextNative {0}", jsonRet.GetString("text")));
-		return jsonRet.GetString("text");
-	}
-	#endif
 
 	private void RemoveNative()
 	{
@@ -342,19 +334,32 @@ public class NativeEditBox : PluginMsgReceiver {
 		this.SendPluginMsg(jsonMsg);
 	}
 
-	public void SetFocusNative(bool bFocus)
+	public void SetFocus(bool bFocus)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		if (!bNativeEditCreated)
 		{
 			focusOnCreate = bFocus;
 			return;
 		}
+
 		JsonObject jsonMsg = new JsonObject();
 		
 		jsonMsg["msg"] = MSG_SET_FOCUS;
 		jsonMsg["isFocus"] = bFocus;
 		
 		this.SendPluginMsg(jsonMsg);
+#else
+		if (gameObject.activeInHierarchy)
+		{
+			if (bFocus)
+				objUnityInput.ActivateInputField();
+			else
+				objUnityInput.DeactivateInputField();
+		}
+		else
+			focusOnCreate = bFocus;
+#endif
 	}
 
 	public void SetVisible(bool bVisible)
@@ -379,7 +384,7 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	void UpdateForceKeyeventForAndroid()
 	{
-		#if UNITY_ANDROID &&!UNITY_EDITOR
+		#if UNITY_ANDROID && !UNITY_EDITOR
 
 		if (Input.anyKeyDown)
 		{
