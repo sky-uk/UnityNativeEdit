@@ -362,7 +362,8 @@ bool approxEqualFloat(float x, float y)
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
-        textField.placeholder = placeholder;
+        // Settings the placeholder like this is needed because otherwise it will not be visible
+        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: [UIColor lightTextColor]}];
         textField.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
