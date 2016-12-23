@@ -362,7 +362,8 @@ bool approxEqualFloat(float x, float y)
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
-        textField.placeholder = placeholder;
+        // Settings the placeholder like this is needed because otherwise it will not be visible
+        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: [UIColor lightTextColor]}];
         textField.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -492,16 +493,6 @@ bool approxEqualFloat(float x, float y)
 
 -(void) textFieldDidChange :(UITextField *)theTextField{
     [self onTextChange:theTextField.text];
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    textField.placeholder = nil;
-}
-
--(void) textFieldDidEndEditing:(UITextField *)textField
-{
-    textField.placeholder = placeholder;
-    [self onTextEditEnd:textField.text];
 }
 
 -(void) keyboardWillShow:(NSNotification *)notification
