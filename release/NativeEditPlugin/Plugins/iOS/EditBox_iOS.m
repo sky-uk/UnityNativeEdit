@@ -494,16 +494,6 @@ bool approxEqualFloat(float x, float y)
     [self onTextChange:theTextField.text];
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    textField.placeholder = nil;
-}
-
--(void) textFieldDidEndEditing:(UITextField *)textField
-{
-    textField.placeholder = placeholder;
-    [self onTextEditEnd:textField.text];
-}
-
 -(void) keyboardWillShow:(NSNotification *)notification
 {
     if (![editView isFirstResponder]) return;
