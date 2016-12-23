@@ -81,7 +81,11 @@ public class NativeEditBox : PluginMsgReceiver {
 	public string text
 	{
 		get { return objUnityInput.text; }
-		set { objUnityInput.text = value; }
+		set
+		{
+			objUnityInput.text = value;
+			SetTextNative(value);
+		}
 	}
 
 	public static Rect GetScreenRectFromRectTransform(RectTransform rectTransform)
