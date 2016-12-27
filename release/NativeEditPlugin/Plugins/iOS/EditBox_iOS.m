@@ -8,7 +8,6 @@
 UIViewController* unityViewController = nil;
 NSMutableDictionary*    dictEditBox = nil;
 EditBoxHoldView*         viewPlugin = nil;
-NSString* placeholder = nil;
 
 #define DEF_PixelPerPoint 2.2639f // 72 points per inch. iPhone 163DPI
 char    g_unityName[64];
@@ -180,7 +179,7 @@ bool approxEqualFloat(float x, float y)
 
 -(void) create:(JsonObject*)json
 {
-    placeholder = [json getString:@"placeHolder"];
+    NSString* placeholder = [json getString:@"placeHolder"];
     
     NSString* font = [json getString:@"font"];
     float fontSize = [json getFloat:@"fontSize"];
