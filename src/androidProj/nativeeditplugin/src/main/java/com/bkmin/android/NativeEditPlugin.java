@@ -2,32 +2,20 @@ package com.bkmin.android;
 import com.unity3d.player.*;
 
 import android.app.Activity;
-import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
-/// UnityEditBox Plugin
-/// Written by bkmin 2015/5 (kmin.bang@gmail.com)
 
 public class NativeEditPlugin {
     public static Activity unityActivity;
     public static RelativeLayout mainLayout;
     private static ViewGroup	topViewGroup;
-    private static boolean		pluginInitialized = false;
-    private static final Object Lock = new Object() {};
-    private static int		keyboardHeight = 0;
     private static String   unityName = "";
-    private static String MSG_SHOW_KEYBOARD = "ShowKeyboard";
 
-    public static String LOG_TAG = "NativeEditPlugin";
+    public static final String LOG_TAG = "NativeEditPlugin";
 
     private static View getLeafView(View view) {
         if (view instanceof ViewGroup) {
@@ -46,22 +34,7 @@ public class NativeEditPlugin {
         }
     }
 
-    private static void SetInitialized()
-    {
-        synchronized(Lock)
-        {
-            pluginInitialized = true;
-        }
-    }
-
-    public static boolean IsPluginInitialized()
-    {
-        synchronized(Lock)
-        {
-            return pluginInitialized;
-        }
-    }
-
+    @SuppressWarnings("unused")
     public static void InitPluginMsgHandler(final String _unityName)
     {
         unityActivity = UnityPlayer.currentActivity;
@@ -80,7 +53,6 @@ public class NativeEditPlugin {
                         RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.MATCH_PARENT);
                 topViewGroup.addView(mainLayout, rlp);
-                SetInitialized();
 
                 // This is needed to hide the on-screen buttons on some Android devices when the EditBox is destroyed.
                 rootView.setOnSystemUiVisibilityChangeListener (new View.OnSystemUiVisibilityChangeListener() {
@@ -103,6 +75,7 @@ public class NativeEditPlugin {
         });
     }
 
+    @SuppressWarnings("unused")
     public static void ClosePluginMsgHandler()
     {
         unityActivity.runOnUiThread(new Runnable() {
@@ -117,6 +90,7 @@ public class NativeEditPlugin {
         UnityPlayer.UnitySendMessage(unityName, "OnMsgFromPlugin", jsonMsg.toString());
     }
 
+    @SuppressWarnings("unused")
     public static String SendUnityMsgToPlugin(final int nSenderId, final String jsonMsg) {
         final Runnable task = new Runnable() {
             public void run() {
