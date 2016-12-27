@@ -196,6 +196,10 @@ public class EditBox {
             int backColor_g = (int) (255.0f * jsonObj.getDouble("backColor_g"));
             int backColor_b = (int) (255.0f * jsonObj.getDouble("backColor_b"));
             int backColor_a = (int) (255.0f * jsonObj.getDouble("backColor_a"));
+            int placeHolderColor_r = (int) (255.0f * jsonObj.getDouble("placeHolderColor_r"));
+            int placeHolderColor_g = (int) (255.0f * jsonObj.getDouble("placeHolderColor_g"));
+            int placeHolderColor_b = (int) (255.0f * jsonObj.getDouble("placeHolderColor_b"));
+            int placeHolderColor_a = (int) (255.0f * jsonObj.getDouble("placeHolderColor_a"));
 
             String contentType = jsonObj.getString("contentType");
             String inputType = jsonObj.optString("inputType");
@@ -313,6 +317,7 @@ public class EditBox {
             edit.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) fontSize);
             edit.setTextColor(Color.argb(textColor_a, textColor_r, textColor_g, textColor_b));
             edit.setBackgroundColor(Color.argb(backColor_a, backColor_r, backColor_g, backColor_b));
+            edit.setHintTextColor(Color.argb(placeHolderColor_a, placeHolderColor_r, placeHolderColor_g, placeHolderColor_b));
 
             Typeface tf = Typeface.create(font, Typeface.NORMAL);
             edit.setTypeface(tf);
