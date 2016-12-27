@@ -193,10 +193,14 @@ bool approxEqualFloat(float x, float y)
     float textColor_g = [json getFloat:@"textColor_g"];
     float textColor_b = [json getFloat:@"textColor_b"];
     float textColor_a = [json getFloat:@"textColor_a"];
+    UIColor* textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
+    
     float backColor_r = [json getFloat:@"backColor_r"];
     float backColor_g = [json getFloat:@"backColor_g"];
     float backColor_b = [json getFloat:@"backColor_b"];
     float backColor_a = [json getFloat:@"backColor_a"];
+    UIColor* backgroundColor = [UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+    
     
     NSString* contentType = [json getString:@"contentType"];
     NSString* alignment = [json getString:@"align"];
@@ -328,10 +332,10 @@ bool approxEqualFloat(float x, float y)
         textView.tag = 0;
         textView.text = @"";
         
-        textView.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
-        textView.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+        textView.textColor = textColor;
+        textView.backgroundColor = backgroundColor;
         textView.returnKeyType = returnKeyType;
-        textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo  ;
+        textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
         textView.delegate = self;
@@ -355,8 +359,8 @@ bool approxEqualFloat(float x, float y)
         textField.delegate = self;
         textField.tag = 0;
         textField.text = @"";
-        textField.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
-        textField.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+        textField.textColor = textColor;
+        textField.backgroundColor = backgroundColor;
         textField.returnKeyType = returnKeyType;
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
