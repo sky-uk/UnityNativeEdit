@@ -49,6 +49,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		public float fontSize;
 		public string align; 
 		public string placeHolder;
+		public Color placeHolderColor;
 	}
 
 	public enum ReturnKeyType { Default, Next, Done };
@@ -188,9 +189,10 @@ public class NativeEditBox : PluginMsgReceiver {
 	
 	private void PrepareNativeEdit()
 	{
-		Graphic placeHolder = objUnityInput.placeholder;
+		var placeHolder = objUnityInput.placeholder.GetComponent<Text>();
 		
-		mConfig.placeHolder = placeHolder.GetComponent<Text>().text;
+		mConfig.placeHolder = placeHolder.text;
+		mConfig.placeHolderColor = placeHolder.color;
 		mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
@@ -276,6 +278,10 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["align"] = mConfig.align;
 		jsonMsg["withDoneButton"] = this.withDoneButton;
 		jsonMsg["placeHolder"] = mConfig.placeHolder;
+		jsonMsg["placeHolderColor_r"] = mConfig.placeHolderColor.r;
+		jsonMsg["placeHolderColor_g"] = mConfig.placeHolderColor.g;
+		jsonMsg["placeHolderColor_b"] = mConfig.placeHolderColor.b;
+		jsonMsg["placeHolderColor_a"] = mConfig.placeHolderColor.a;
 		jsonMsg["multiline"] = mConfig.multiline;
 
 		switch (returnKeyType)

@@ -201,6 +201,11 @@ bool approxEqualFloat(float x, float y)
     float backColor_a = [json getFloat:@"backColor_a"];
     UIColor* backgroundColor = [UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
     
+    float placeHolderColor_r = [json getFloat:@"placeHolderColor_r"];
+    float placeHolderColor_g = [json getFloat:@"placeHolderColor_g"];
+    float placeHolderColor_b = [json getFloat:@"placeHolderColor_b"];
+    float placeHolderColor_a = [json getFloat:@"placeHolderColor_a"];
+    UIColor* placeHolderColor = [UIColor colorWithRed:placeHolderColor_r green:placeHolderColor_g blue:placeHolderColor_b alpha:placeHolderColor_a];
     
     NSString* contentType = [json getString:@"contentType"];
     NSString* alignment = [json getString:@"align"];
@@ -338,6 +343,7 @@ bool approxEqualFloat(float x, float y)
         textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
+        textView.placeholderColor = placeHolderColor;
         textView.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -366,7 +372,7 @@ bool approxEqualFloat(float x, float y)
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
         // Settings the placeholder like this is needed because otherwise it will not be visible
-        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: [UIColor lightTextColor]}];
+        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
         textField.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
