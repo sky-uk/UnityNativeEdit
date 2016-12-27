@@ -180,7 +180,10 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	private void Update()
 	{
+#if UNITY_ANDROID && !UNITY_EDITOR
 		this.UpdateForceKeyeventForAndroid();
+#endif
+
 		if (updateRectEveryFrame && this.objUnityInput != null && bNativeEditCreated)
 		{
 			SetRectNative(this.objUnityText.rectTransform);
@@ -378,7 +381,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		this.SendPluginMsg(jsonMsg);
 	}
 
-	void ForceSendKeydown_Android(string key)
+#if UNITY_ANDROID && !UNITY_EDITOR
+	private void ForceSendKeydown_Android(string key)
 	{
 		JsonObject jsonMsg = new JsonObject();
 		
@@ -387,11 +391,8 @@ public class NativeEditBox : PluginMsgReceiver {
 		this.SendPluginMsg(jsonMsg);
 	}
 
-
-	void UpdateForceKeyeventForAndroid()
+	private void UpdateForceKeyeventForAndroid()
 	{
-		#if UNITY_ANDROID && !UNITY_EDITOR
-
 		if (Input.anyKeyDown)
 		{
 			if (Input.GetKeyDown(KeyCode.Backspace))
@@ -413,7 +414,6 @@ public class NativeEditBox : PluginMsgReceiver {
 				}
 			}
 		}	
-		#endif	
 	}
-
+#endif
 }
