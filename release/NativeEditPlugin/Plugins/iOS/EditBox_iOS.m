@@ -8,7 +8,6 @@
 UIViewController* unityViewController = nil;
 NSMutableDictionary*    dictEditBox = nil;
 EditBoxHoldView*         viewPlugin = nil;
-NSString* placeholder = nil;
 
 #define DEF_PixelPerPoint 2.2639f // 72 points per inch. iPhone 163DPI
 char    g_unityName[64];
@@ -180,7 +179,7 @@ bool approxEqualFloat(float x, float y)
 
 -(void) create:(JsonObject*)json
 {
-    placeholder = [json getString:@"placeHolder"];
+    NSString* placeholder = [json getString:@"placeHolder"];
     
     NSString* font = [json getString:@"font"];
     float fontSize = [json getFloat:@"fontSize"];
@@ -194,10 +193,19 @@ bool approxEqualFloat(float x, float y)
     float textColor_g = [json getFloat:@"textColor_g"];
     float textColor_b = [json getFloat:@"textColor_b"];
     float textColor_a = [json getFloat:@"textColor_a"];
+    UIColor* textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
+    
     float backColor_r = [json getFloat:@"backColor_r"];
     float backColor_g = [json getFloat:@"backColor_g"];
     float backColor_b = [json getFloat:@"backColor_b"];
     float backColor_a = [json getFloat:@"backColor_a"];
+    UIColor* backgroundColor = [UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+    
+    float placeHolderColor_r = [json getFloat:@"placeHolderColor_r"];
+    float placeHolderColor_g = [json getFloat:@"placeHolderColor_g"];
+    float placeHolderColor_b = [json getFloat:@"placeHolderColor_b"];
+    float placeHolderColor_a = [json getFloat:@"placeHolderColor_a"];
+    UIColor* placeHolderColor = [UIColor colorWithRed:placeHolderColor_r green:placeHolderColor_g blue:placeHolderColor_b alpha:placeHolderColor_a];
     
     NSString* contentType = [json getString:@"contentType"];
     NSString* alignment = [json getString:@"align"];
@@ -329,12 +337,13 @@ bool approxEqualFloat(float x, float y)
         textView.tag = 0;
         textView.text = @"";
         
-        textView.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
-        textView.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+        textView.textColor = textColor;
+        textView.backgroundColor = backgroundColor;
         textView.returnKeyType = returnKeyType;
-        textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo  ;
+        textView.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
         textView.placeholder = placeholder;
+        textView.placeholderColor = placeHolderColor;
         textView.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -356,14 +365,14 @@ bool approxEqualFloat(float x, float y)
         textField.delegate = self;
         textField.tag = 0;
         textField.text = @"";
-        textField.textColor = [UIColor colorWithRed:textColor_r green:textColor_g blue:textColor_b alpha:textColor_a];
-        textField.backgroundColor =[UIColor colorWithRed:backColor_r green:backColor_g blue:backColor_b alpha:backColor_a];
+        textField.textColor = textColor;
+        textField.backgroundColor = backgroundColor;
         textField.returnKeyType = returnKeyType;
         textField.autocorrectionType = autoCorr ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo;
         textField.contentVerticalAlignment = valign;
         textField.contentHorizontalAlignment = halign;
         // Settings the placeholder like this is needed because otherwise it will not be visible
-        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: [UIColor lightTextColor]}];
+        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
         textField.delegate = self;
         if (keyType == UIKeyboardTypeEmailAddress)
             textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
