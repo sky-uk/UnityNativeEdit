@@ -206,6 +206,13 @@ public class NativeEditBox : PluginMsgReceiver {
 
 	private void onTextChange(string newText)
 	{
+		bool didTextChange = newText == this.objUnityInput.text;
+
+		// Avoid firing a delayed onValueChanged event if the text was changed from Unity with the text property in this
+		// class.
+		if (!didTextChange)
+			return;
+		
 		this.objUnityInput.text = newText;
 		if (this.objUnityInput.onValueChanged != null) this.objUnityInput.onValueChanged.Invoke(newText);
 	}
