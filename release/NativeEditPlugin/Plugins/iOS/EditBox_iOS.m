@@ -326,11 +326,19 @@ bool approxEqualFloat(float x, float y)
         returnKeyType = UIReturnKeyDone;
     }
     
+    UIFont* uiFont;
+    if ([font length] > 0)
+        uiFont = [UIFont fontWithName:font size:fontSize];
+    else
+        uiFont = [UIFont systemFontOfSize:fontSize];
+    
     if (multiline)
     {
         PlaceholderTextView* textView = [[PlaceholderTextView alloc] initWithFrame:CGRectMake(x, y, width, height)];
         textView.keyboardType = keyType;
-        [textView setFont:[UIFont fontWithName:font size:fontSize]];
+        
+        [textView setFont:uiFont];
+        
         textView.scrollEnabled = TRUE;
         
         textView.delegate = self;
@@ -361,7 +369,7 @@ bool approxEqualFloat(float x, float y)
     {
         UITextField* textField = [[UITextField alloc] initWithFrame:CGRectMake(x, y, width, height)];
         textField.keyboardType = keyType;
-        [textField setFont:[UIFont fontWithName:font size:fontSize]];
+        [textField setFont:uiFont];
         textField.delegate = self;
         textField.tag = 0;
         textField.text = @"";

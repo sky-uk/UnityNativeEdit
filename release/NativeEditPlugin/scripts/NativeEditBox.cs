@@ -58,6 +58,7 @@ public class NativeEditBox : PluginMsgReceiver {
 	public ReturnKeyType returnKeyType;
 	public event Action returnPressed; 
 	public bool updateRectEveryFrame;
+	public bool useInputFieldFont;
 	public UnityEngine.Events.UnityEvent OnReturnPressed;
 
 	private bool	bNativeEditCreated = false;
@@ -196,7 +197,9 @@ public class NativeEditBox : PluginMsgReceiver {
 		
 		mConfig.placeHolder = placeHolder.text;
 		mConfig.placeHolderColor = placeHolder.color;
-		mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
+
+		if (useInputFieldFont)
+			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;

@@ -277,8 +277,10 @@ public class EditBox {
             edit.setBackgroundColor(Color.argb(backColor_a, backColor_r, backColor_g, backColor_b));
             edit.setHintTextColor(Color.argb(placeHolderColor_a, placeHolderColor_r, placeHolderColor_g, placeHolderColor_b));
 
-            Typeface tf = Typeface.create(font, Typeface.NORMAL);
-            edit.setTypeface(tf);
+            if (font != null && !font.isEmpty()) {
+                Typeface tf = Typeface.create(font, Typeface.NORMAL);
+                edit.setTypeface(tf);
+            }
 
             final EditBox eb = this;
 
