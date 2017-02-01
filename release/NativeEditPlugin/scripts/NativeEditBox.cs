@@ -203,7 +203,14 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;
-		mConfig.fontSize = ((float) objUnityText.fontSize) * fHeightRatio;
+
+		var screenSizeInches = (float) Screen.height / (float) Screen.dpi;
+		var screenAspectRatio = (float) Screen.width / (float) Screen.height;
+
+
+		UnityEngine.Debug.Log("screen width: " + Screen.width + " Screen height: " + Screen.height + "screenAspectRatio: " + screenAspectRatio + " unity font size: " + objUnityText.fontSize + " screensizeinches: " + screenSizeInches);
+
+		mConfig.fontSize = ((float)objUnityText.fontSize) * screenSizeInches * 0.23f * screenAspectRatio / 1.779f;
 
 		mConfig.textColor = objUnityText.color;
 		mConfig.align = objUnityText.alignment.ToString();

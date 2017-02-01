@@ -9,7 +9,6 @@ UIViewController* unityViewController = nil;
 NSMutableDictionary*    dictEditBox = nil;
 EditBoxHoldView*         viewPlugin = nil;
 
-#define DEF_PixelPerPoint 2.2639f // 72 points per inch. iPhone 163DPI
 char    g_unityName[64];
 
 bool approxEqualFloat(float x, float y)
@@ -297,8 +296,6 @@ bool approxEqualFloat(float x, float y)
         valign = UIControlContentVerticalAlignmentBottom;
         halign = UIControlContentHorizontalAlignmentRight;
     }
-
-    fontSize = fontSize / DEF_PixelPerPoint;
    
     if (withDoneButton)
     {
@@ -328,9 +325,17 @@ bool approxEqualFloat(float x, float y)
     
     UIFont* uiFont;
     if ([font length] > 0)
+    {
         uiFont = [UIFont fontWithName:font size:fontSize];
+        NSLog(@"Font lenth more than 0");
+    }
     else
+    {
         uiFont = [UIFont systemFontOfSize:fontSize];
+        NSLog(@"Font length less than 0");
+    }
+    
+    NSLog([NSString stringWithFormat:@"%@/%f", @"font size", fontSize]);
     
     if (multiline)
     {
