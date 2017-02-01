@@ -323,19 +323,21 @@ bool approxEqualFloat(float x, float y)
         returnKeyType = UIReturnKeyDone;
     }
     
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat logicalScreenWidth = screenWidth / viewPlugin.contentScaleFactor;
+    fontSize = (logicalScreenWidth / 1024.0f) * fontSize;
+
+    
     UIFont* uiFont;
     if ([font length] > 0)
     {
         uiFont = [UIFont fontWithName:font size:fontSize];
-        NSLog(@"Font lenth more than 0");
     }
     else
     {
         uiFont = [UIFont systemFontOfSize:fontSize];
-        NSLog(@"Font length less than 0");
-    }
-    
-    NSLog([NSString stringWithFormat:@"%@/%f", @"font size", fontSize]);
+    }    
     
     if (multiline)
     {
