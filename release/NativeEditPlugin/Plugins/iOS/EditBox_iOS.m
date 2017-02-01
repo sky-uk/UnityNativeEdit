@@ -327,7 +327,6 @@ bool approxEqualFloat(float x, float y)
     CGFloat screenWidth = screenRect.size.width;
     CGFloat logicalScreenWidth = screenWidth / viewPlugin.contentScaleFactor;
     fontSize = (logicalScreenWidth / 1024.0f) * fontSize;
-
     
     UIFont* uiFont;
     if ([font length] > 0)
