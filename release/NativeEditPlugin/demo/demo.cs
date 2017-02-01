@@ -18,7 +18,7 @@ public class demo : MonoBehaviour {
 		tempTest.transform.position += new Vector3(0.0f, -250.0f, 0.0f);
 
 		NativeEditBox tempNB = tempTest.GetComponent<NativeEditBox>();;
-		tempNB.SetTextNative("fdfdsfsd");
+//		tempNB.SetTextNative("fdfdsfsd");
 	}
 	
 	// Update is called once per frame
@@ -57,7 +57,7 @@ public class demo : MonoBehaviour {
 	{
 		bTempFocus = !bTempFocus;
 		Debug.Log("OnButton1 clicked");
-		testNativeEdit.SetFocusNative(bTempFocus);
+//		testNativeEdit.SetFocusNative(bTempFocus);
 	}
 
 	public void OnButton2()
@@ -77,7 +77,7 @@ public class demo : MonoBehaviour {
 	public void OnButton5()
 	{
 		Debug.Log("OnButton5 clicked");
-		testNativeEdit.SetTextNative("TestText Set!!@#@5");
+//		testNativeEdit.SetTextNative("TestText Set!!@#@5");
 	}
 
 	
