@@ -164,6 +164,14 @@ public class NativeEditBox : PluginMsgReceiver {
 		base.OnDestroy();
 	}
 
+	void OnApplicationFocus(bool hasFocus)
+	{
+		if (bNativeEditCreated)
+		{
+			this.SetVisible(hasFocus);
+		}
+	}
+
 	private IEnumerator InitializeAtEndOfFrame()
 	{
 		yield return new WaitForEndOfFrame();
