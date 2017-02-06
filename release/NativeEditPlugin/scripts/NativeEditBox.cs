@@ -164,10 +164,12 @@ public class NativeEditBox : PluginMsgReceiver {
 		base.OnDestroy();
 	}
 
-	void OnApplicationFocus(bool hasFocus)
+	private void OnApplicationFocus(bool hasFocus)
 	{
-		if (bNativeEditCreated)
-			this.SetVisible(hasFocus);
+		if (!bNativeEditCreated)
+			return;
+
+		this.SetVisible(hasFocus);
 	}
 
 	private IEnumerator InitializeAtEndOfFrame()
