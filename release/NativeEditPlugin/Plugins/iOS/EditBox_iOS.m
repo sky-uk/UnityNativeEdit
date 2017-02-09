@@ -323,10 +323,7 @@ bool approxEqualFloat(float x, float y)
         returnKeyType = UIReturnKeyDone;
     }
     
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGFloat screenWidth = screenRect.size.width;
-    CGFloat logicalScreenWidth = screenWidth / viewPlugin.contentScaleFactor;
-    fontSize = (logicalScreenWidth / 1024.0f) * fontSize;
+    fontSize = fontSize / viewPlugin.contentScaleFactor;
     
     UIFont* uiFont;
     if ([font length] > 0)
