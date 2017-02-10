@@ -209,9 +209,15 @@ public class NativeEditBox : PluginMsgReceiver {
 		if (useInputFieldFont)
 			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
 
+
+		// Font size scaling for iOS is done on the native side.
+		#if UNITY_IOS
+		mConfig.fontSize = ((float)objUnityText.fontSize);
+		#else
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;
 		mConfig.fontSize = ((float) objUnityText.fontSize) * fHeightRatio;
+		#endif
 
 		mConfig.textColor = objUnityText.color;
 		mConfig.align = objUnityText.alignment.ToString();

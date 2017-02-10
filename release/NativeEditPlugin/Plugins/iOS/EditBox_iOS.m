@@ -323,7 +323,8 @@ bool approxEqualFloat(float x, float y)
         returnKeyType = UIReturnKeyDone;
     }
     
-    fontSize = fontSize / viewPlugin.contentScaleFactor;
+    // Conversion for retina displays
+    fontSize = fontSize / [UIScreen mainScreen].scale;
     
     UIFont* uiFont;
     if ([font length] > 0)
