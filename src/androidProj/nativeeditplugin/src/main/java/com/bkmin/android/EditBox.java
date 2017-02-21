@@ -308,13 +308,15 @@ public class EditBox {
                 public void afterTextChanged(Editable s)
                 {
                     JSONObject jsonToUnity = new JSONObject();
-                    if(s.length() >= characterLimit+1)
+
+                    if(s.length() >= characterLimit+1 && characterLimit > 0)
                     {
                         s.delete(s.length() - 1,
                                 s.length());
                         edit.setText(s);
                         edit.setSelection(s.length());
                     }
+
                     try
                     {
                         jsonToUnity.put("msg", MSG_TEXT_CHANGE);

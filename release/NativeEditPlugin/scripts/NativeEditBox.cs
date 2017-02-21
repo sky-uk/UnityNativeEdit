@@ -80,8 +80,6 @@ public class NativeEditBox : PluginMsgReceiver {
 	private const string MSG_RETURN_PRESSED = "ReturnPressed";
 	private const string MSG_GET_TEXT = "GetText";
 
-	private const int characterLimitDefault = 40;
-
 	public InputField InputField { get { return objUnityInput; } }
 	public string text
 	{
@@ -208,11 +206,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		
 		mConfig.placeHolder = placeHolder.text;
 		mConfig.placeHolderColor = placeHolder.color;
-
-		if (objUnityInput.characterLimit > 1)
-			mConfig.characterLimit = objUnityInput.characterLimit;
-		else
-			mConfig.characterLimit = characterLimitDefault;
+		mConfig.characterLimit = objUnityInput.characterLimit;
 
 		if (useInputFieldFont)
 			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
