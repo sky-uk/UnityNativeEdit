@@ -309,7 +309,7 @@ public class EditBox {
                 {
                     JSONObject jsonToUnity = new JSONObject();
 
-                    if(s.length() >= characterLimit+1 && characterLimit > 0)
+                    if(characterLimit > 0 && s.length() >= characterLimit+1)
                     {
                         s.delete(s.length() - 1,
                                 s.length());

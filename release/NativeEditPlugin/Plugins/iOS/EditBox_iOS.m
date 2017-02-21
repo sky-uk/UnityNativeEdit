@@ -188,6 +188,7 @@ bool approxEqualFloat(float x, float y)
     float y = [json getFloat:@"y"] * viewController.view.bounds.size.height;
     float width = [json getFloat:@"width"] * viewController.view.bounds.size.width;
     float height = [json getFloat:@"height"] * viewController.view.bounds.size.height;
+    
     characterLimit = [json getInt:@"characterLimit"];
     
     float textColor_r = [json getFloat:@"textColor_r"];

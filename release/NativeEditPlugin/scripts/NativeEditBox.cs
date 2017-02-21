@@ -203,13 +203,13 @@ public class NativeEditBox : PluginMsgReceiver {
 	private void PrepareNativeEdit()
 	{
 		var placeHolder = objUnityInput.placeholder.GetComponent<Text>();
-		
-		mConfig.placeHolder = placeHolder.text;
-		mConfig.placeHolderColor = placeHolder.color;
-		mConfig.characterLimit = objUnityInput.characterLimit;
 
 		if (useInputFieldFont)
 			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
+
+		mConfig.placeHolder = placeHolder.text;
+		mConfig.placeHolderColor = placeHolder.color;
+		mConfig.characterLimit = objUnityInput.characterLimit;
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;
