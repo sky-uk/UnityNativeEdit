@@ -49,6 +49,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		public float fontSize;
 		public string align; 
 		public string placeHolder;
+		public int characterLimit;
 		public Color placeHolderColor;
 	}
 
@@ -78,6 +79,8 @@ public class NativeEditBox : PluginMsgReceiver {
 	private const string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
 	private const string MSG_RETURN_PRESSED = "ReturnPressed";
 	private const string MSG_GET_TEXT = "GetText";
+
+	private const int characterLimitDefault = 40;
 
 	public InputField InputField { get { return objUnityInput; } }
 	public string text
@@ -206,6 +209,11 @@ public class NativeEditBox : PluginMsgReceiver {
 		mConfig.placeHolder = placeHolder.text;
 		mConfig.placeHolderColor = placeHolder.color;
 
+		if (objUnityInput.characterLimit > 1)
+			mConfig.characterLimit = objUnityInput.characterLimit;
+		else
+			mConfig.characterLimit = characterLimitDefault;
+
 		if (useInputFieldFont)
 			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
 
@@ -282,6 +290,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["y"] = rectScreen.y / Screen.height;
 		jsonMsg["width"] = rectScreen.width / Screen.width;
 		jsonMsg["height"] = rectScreen.height / Screen.height;
+		jsonMsg["characterLimit"] = mConfig.characterLimit;
 
 		jsonMsg["textColor_r"] = mConfig.textColor.r;
 		jsonMsg["textColor_g"] = mConfig.textColor.g;

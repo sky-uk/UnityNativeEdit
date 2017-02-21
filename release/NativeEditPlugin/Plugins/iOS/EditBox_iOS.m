@@ -10,6 +10,7 @@ NSMutableDictionary*    dictEditBox = nil;
 EditBoxHoldView*         viewPlugin = nil;
 
 char    g_unityName[64];
+int characterLimit;
 
 bool approxEqualFloat(float x, float y)
 {
@@ -187,6 +188,7 @@ bool approxEqualFloat(float x, float y)
     float y = [json getFloat:@"y"] * viewController.view.bounds.size.height;
     float width = [json getFloat:@"width"] * viewController.view.bounds.size.width;
     float height = [json getFloat:@"height"] * viewController.view.bounds.size.height;
+    characterLimit =[json getFloat:@"characterLimit"];
     
     float textColor_r = [json getFloat:@"textColor_r"];
     float textColor_g = [json getFloat:@"textColor_g"];
@@ -510,6 +512,17 @@ bool approxEqualFloat(float x, float y)
     [jsonToUnity setString:@"msg" value:MSG_RETURN_PRESSED];
     [self sendJsonToUnity:jsonToUnity];
     return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    // Prevent crashing undo bug – see note below.
+    if(range.length + range.location > textField.text.length)
+    {
+        return NO;
+    }
+    
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    return newLength <= characterLimit;
 }
 
 -(void) textFieldDidChange :(UITextField *)theTextField{

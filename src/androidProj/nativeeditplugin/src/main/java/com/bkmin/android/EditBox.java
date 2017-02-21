@@ -22,11 +22,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.text.InputFilter;
 
 public class EditBox {
     private EditText edit;
     private final RelativeLayout layout;
     private int tag;
+    private int characterLimit;
 
     private static SparseArray<EditBox> mapEditBox = null;
     private static final String MSG_CREATE = "CreateEdit";
@@ -154,6 +156,7 @@ public class EditBox {
             double y = jsonObj.getDouble("y") * (double) layout.getHeight();
             double width = jsonObj.getDouble("width") * (double) layout.getWidth();
             double height = jsonObj.getDouble("height") * (double) layout.getHeight();
+            characterLimit = jsonObj.getInt("characterLimit");
 
             int textColor_r = (int) (255.0f * jsonObj.getDouble("textColor_r"));
             int textColor_g = (int) (255.0f * jsonObj.getDouble("textColor_g"));
@@ -271,7 +274,6 @@ public class EditBox {
 
             edit.setGravity(gravity);
 
-
             edit.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) fontSize);
             edit.setTextColor(Color.argb(textColor_a, textColor_r, textColor_g, textColor_b));
             edit.setBackgroundColor(Color.argb(backColor_a, backColor_r, backColor_g, backColor_b));
@@ -306,6 +308,13 @@ public class EditBox {
                 public void afterTextChanged(Editable s)
                 {
                     JSONObject jsonToUnity = new JSONObject();
+                    if(s.length() >= characterLimit+1)
+                    {
+                        s.delete(s.length() - 1,
+                                s.length());
+                        edit.setText(s);
+                        edit.setSelection(s.length());
+                    }
                     try
                     {
                         jsonToUnity.put("msg", MSG_TEXT_CHANGE);
