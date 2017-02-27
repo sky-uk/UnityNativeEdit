@@ -526,7 +526,7 @@ bool approxEqualFloat(float x, float y)
     if(characterLimit > 0)
         return newLength <= characterLimit;
     else
-        return newLength;
+        return YES;
 }
 
 -(void) textFieldDidChange :(UITextField *)theTextField{
