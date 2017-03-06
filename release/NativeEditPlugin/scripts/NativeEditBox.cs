@@ -75,8 +75,6 @@ public class NativeEditBox : PluginMsgReceiver
 	private InputField	objUnityInput;
 	private Text objUnityText;
 	private bool focusOnCreate;
-	// Might be useful to users who experience a deadlock from android when trying to retieve and use data and using the return function. This can happen when using some other native plugins.
-	private bool returnHasDelay = true;
 
 	private const string MSG_CREATE = "CreateEdit";
 	private const string MSG_REMOVE = "RemoveEdit";
@@ -255,12 +253,12 @@ public class NativeEditBox : PluginMsgReceiver
 
 	public override void OnPluginMsgDirect(JsonObject jsonMsg)
 	{
-		StartCorutine(jsonMsg);
+		StartCoroutine(PluginsMessageRoutine(jsonMsg));
 	}
 
 	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
 	{
-		yield return new WaitForFrame();
+		yield return new WaitForEndOfFrame();
 
 		string msg = jsonMsg.GetString("msg");
 		if (msg.Equals(MSG_TEXT_CHANGE))
