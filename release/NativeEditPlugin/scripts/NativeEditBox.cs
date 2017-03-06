@@ -38,7 +38,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(InputField))]
-public class NativeEditBox : PluginMsgReceiver {
+public class NativeEditBox : PluginMsgReceiver
+{
 	private struct EditBoxConfig
 	{
 		public bool multiline;
@@ -47,26 +48,35 @@ public class NativeEditBox : PluginMsgReceiver {
 		public string contentType;
 		public string font;
 		public float fontSize;
-		public string align; 
+		public string align;
 		public string placeHolder;
 		public int characterLimit;
 		public Color placeHolderColor;
 	}
 
-	public enum ReturnKeyType { Default, Next, Done };
-
+	public enum ReturnKeyType
+	{
+		Default,
+		Next,
+		Done
+	}
+		
 	public bool	withDoneButton = true;
 	public ReturnKeyType returnKeyType;
-	public event Action returnPressed; 
+
+	public event Action returnPressed;
+
 	public bool updateRectEveryFrame;
 	public bool useInputFieldFont;
 	public UnityEngine.Events.UnityEvent OnReturnPressed;
 
-	private bool	bNativeEditCreated = false;
+	private bool bNativeEditCreated = false;
 
 	private InputField	objUnityInput;
-	private Text		objUnityText;
+	private Text objUnityText;
 	private bool focusOnCreate;
+	// Might be useful to users who experience a deadlock from android when trying to retieve and use data and using the return function. This can happen when using some other native plugins.
+	private bool returnHasDelay = true;
 
 	private const string MSG_CREATE = "CreateEdit";
 	private const string MSG_REMOVE = "RemoveEdit";
@@ -76,11 +86,13 @@ public class NativeEditBox : PluginMsgReceiver {
 	private const string MSG_SET_VISIBLE = "SetVisible";
 	private const string MSG_TEXT_CHANGE = "TextChange";
 	private const string MSG_TEXT_END_EDIT = "TextEndEdit";
-	private const string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown"; // to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	// to fix bug Some keys 'back' & 'enter' are eaten by unity and never arrive at plugin
+	private const string MSG_ANDROID_KEY_DOWN = "AndroidKeyDown";
 	private const string MSG_RETURN_PRESSED = "ReturnPressed";
 	private const string MSG_GET_TEXT = "GetText";
 
 	public InputField InputField { get { return objUnityInput; } }
+
 	public string text
 	{
 		get { return objUnityInput.text; }
@@ -199,7 +211,7 @@ public class NativeEditBox : PluginMsgReceiver {
 			SetRectNative(this.objUnityText.rectTransform);
 		}
 	}
-	
+
 	private void PrepareNativeEdit()
 	{
 		var placeHolder = objUnityInput.placeholder.GetComponent<Text>();
@@ -213,7 +225,7 @@ public class NativeEditBox : PluginMsgReceiver {
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;
-		mConfig.fontSize = ((float) objUnityText.fontSize) * fHeightRatio;
+		mConfig.fontSize = ((float)objUnityText.fontSize) * fHeightRatio;
 
 		mConfig.textColor = objUnityText.color;
 		mConfig.align = objUnityText.alignment.ToString();
@@ -230,17 +242,20 @@ public class NativeEditBox : PluginMsgReceiver {
 			return;
 		
 		this.objUnityInput.text = newText;
-		if (this.objUnityInput.onValueChanged != null) this.objUnityInput.onValueChanged.Invoke(newText);
+		if (this.objUnityInput.onValueChanged != null)
+			this.objUnityInput.onValueChanged.Invoke(newText);
 	}
 
 	private void onTextEditEnd(string newText)
 	{
 		this.objUnityInput.text = newText;
-		if (this.objUnityInput.onEndEdit != null) this.objUnityInput.onEndEdit.Invoke(newText);
+		if (this.objUnityInput.onEndEdit != null)
+			this.objUnityInput.onEndEdit.Invoke(newText);
 	}
 
 	public override void OnPluginMsgDirect(JsonObject jsonMsg)
 	{
+
 		string msg = jsonMsg.GetString("msg");
 		if (msg.Equals(MSG_TEXT_CHANGE))
 		{
@@ -254,11 +269,20 @@ public class NativeEditBox : PluginMsgReceiver {
 		}
 		else if (msg.Equals(MSG_RETURN_PRESSED))
 		{
-			if (returnPressed != null)
-				returnPressed();
-			if (OnReturnPressed != null)
-				OnReturnPressed.Invoke();
+			if (returnHasDelay)
+				this.StartDelayedForFrames(1, () => ReturnPressed());
+			else
+				ReturnPressed();
 		}
+		
+	}
+
+	private void ReturnPressed()
+	{
+		if (returnPressed != null)
+			returnPressed();
+		if (OnReturnPressed != null)
+			OnReturnPressed.Invoke();
 	}
 
 	private bool CheckErrorJsonRet(JsonObject jsonRet)
@@ -400,7 +424,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		this.SendPluginMsg(jsonMsg);
 	}
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+	#if UNITY_ANDROID && !UNITY_EDITOR
 	private void ForceSendKeydown_Android(string key)
 	{
 		JsonObject jsonMsg = new JsonObject();
