@@ -185,7 +185,7 @@ public class NativeEditBox : PluginMsgReceiver
 
 	private IEnumerator InitializeAtEndOfFrame()
 	{
-		yield return new WaitForEndOfFrame();
+		yield return null;
 
 		this.PrepareNativeEdit();
 		#if (UNITY_IPHONE || UNITY_ANDROID) && !UNITY_EDITOR
