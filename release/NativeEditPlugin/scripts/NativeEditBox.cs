@@ -255,6 +255,12 @@ public class NativeEditBox : PluginMsgReceiver
 
 	public override void OnPluginMsgDirect(JsonObject jsonMsg)
 	{
+		StartCorutine(jsonMsg);
+	}
+
+	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
+	{
+		yield return new WaitForFrame();
 
 		string msg = jsonMsg.GetString("msg");
 		if (msg.Equals(MSG_TEXT_CHANGE))
@@ -269,20 +275,11 @@ public class NativeEditBox : PluginMsgReceiver
 		}
 		else if (msg.Equals(MSG_RETURN_PRESSED))
 		{
-			if (returnHasDelay)
-				this.StartDelayedForFrames(1, () => ReturnPressed());
-			else
-				ReturnPressed();
+			if (returnPressed != null)
+				returnPressed();
+			if (OnReturnPressed != null)
+				OnReturnPressed.Invoke();
 		}
-		
-	}
-
-	private void ReturnPressed()
-	{
-		if (returnPressed != null)
-			returnPressed();
-		if (OnReturnPressed != null)
-			OnReturnPressed.Invoke();
 	}
 
 	private bool CheckErrorJsonRet(JsonObject jsonRet)
