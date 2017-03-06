@@ -49,6 +49,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		public float fontSize;
 		public string align; 
 		public string placeHolder;
+		public int characterLimit;
 		public Color placeHolderColor;
 	}
 
@@ -202,12 +203,13 @@ public class NativeEditBox : PluginMsgReceiver {
 	private void PrepareNativeEdit()
 	{
 		var placeHolder = objUnityInput.placeholder.GetComponent<Text>();
-		
-		mConfig.placeHolder = placeHolder.text;
-		mConfig.placeHolderColor = placeHolder.color;
 
 		if (useInputFieldFont)
 			mConfig.font = objUnityText.font.fontNames.Length > 0 ? objUnityText.font.fontNames[0] : "Arial";
+
+		mConfig.placeHolder = placeHolder.text;
+		mConfig.placeHolderColor = placeHolder.color;
+		mConfig.characterLimit = objUnityInput.characterLimit;
 
 		Rect rectScreen = GetScreenRectFromRectTransform(this.objUnityText.rectTransform);
 		float fHeightRatio = rectScreen.height / objUnityText.rectTransform.rect.height;
@@ -282,6 +284,7 @@ public class NativeEditBox : PluginMsgReceiver {
 		jsonMsg["y"] = rectScreen.y / Screen.height;
 		jsonMsg["width"] = rectScreen.width / Screen.width;
 		jsonMsg["height"] = rectScreen.height / Screen.height;
+		jsonMsg["characterLimit"] = mConfig.characterLimit;
 
 		jsonMsg["textColor_r"] = mConfig.textColor.r;
 		jsonMsg["textColor_g"] = mConfig.textColor.g;
