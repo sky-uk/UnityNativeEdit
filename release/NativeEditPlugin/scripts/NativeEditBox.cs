@@ -259,7 +259,7 @@ public class NativeEditBox : PluginMsgReceiver
 
 	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
 	{
-		yield return new WaitForEndOfFrame();
+		yield return null;
 
 		string msg = jsonMsg.GetString("msg");
 		if (msg.Equals(MSG_TEXT_CHANGE))
