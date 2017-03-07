@@ -253,7 +253,8 @@ public class NativeEditBox : PluginMsgReceiver
 
 	public override void OnPluginMsgDirect(JsonObject jsonMsg)
 	{
-		StartCoroutine(PluginsMessageRoutine(jsonMsg));
+		if(this.gameObject.activeInHierarchy)
+			StartCoroutine(PluginsMessageRoutine(jsonMsg));
 	}
 
 	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
