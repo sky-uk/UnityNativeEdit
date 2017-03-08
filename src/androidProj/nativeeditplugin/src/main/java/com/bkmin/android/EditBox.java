@@ -22,7 +22,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.text.InputFilter;
 
 public class EditBox {
     private EditText edit;
@@ -84,13 +83,22 @@ public class EditBox {
     private void showKeyboard(boolean isShow)
     {
         InputMethodManager imm = (InputMethodManager) NativeEditPlugin.unityActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        View rootView = NativeEditPlugin.unityActivity.getWindow().getDecorView();
+        rootView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
         if (isShow)
         {
             imm.showSoftInput(edit, InputMethodManager.SHOW_FORCED);
         }
         else
         {
-            View rootView = NativeEditPlugin.unityActivity.getWindow().getDecorView();
             rootView.clearFocus();
             imm.hideSoftInputFromWindow(edit.getWindowToken(), 0);
         }
@@ -289,18 +297,19 @@ public class EditBox {
             edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
+
                     if (!hasFocus) {
                         // your action here
-                        JSONObject jsonToUnity = new JSONObject();
+                        JSONObject msgTextEndJSON = new JSONObject();
                         try
                         {
-                            jsonToUnity.put("msg", MSG_TEXT_END_EDIT);
-                            jsonToUnity.put("text", eb.GetText());
+                            msgTextEndJSON.put("msg", MSG_TEXT_END_EDIT);
+                            msgTextEndJSON.put("text", eb.GetText());
                         }
                         catch(JSONException e) {}
-                        eb.SendJsonToUnity(jsonToUnity);
-                        eb.showKeyboard(false);
+                        eb.SendJsonToUnity(msgTextEndJSON);
                     }
+                    SetFocus(hasFocus);
                 }
             });
 
@@ -430,63 +439,38 @@ public class EditBox {
         edit.setVisibility(bVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void OnForceAndroidKeyDown(String strKey)
-    {
+    private void OnForceAndroidKeyDown(String strKey) {
         if (!this.isFocused()) return;
 
         // Need to force fire key event of backspace and enter because Unity eats them and never return back to plugin.
         // Same happens on number keys on top of the keyboard with Google Keyboard on password fields.
         int keyCode = -1;
-        if (strKey.equalsIgnoreCase("backspace"))
-        {
+        if (strKey.equalsIgnoreCase("backspace")) {
             keyCode = KeyEvent.KEYCODE_DEL;
-        }
-        else if (strKey.equalsIgnoreCase("enter"))
-        {
+        } else if (strKey.equalsIgnoreCase("enter")) {
             keyCode = KeyEvent.KEYCODE_ENTER;
-        }
-        else if (strKey.equals("0"))
-        {
+        } else if (strKey.equals("0")) {
             keyCode = KeyEvent.KEYCODE_0;
-        }
-        else if (strKey.equals("1"))
-        {
+        } else if (strKey.equals("1")) {
             keyCode = KeyEvent.KEYCODE_1;
-        }
-        else if (strKey.equals("2"))
-        {
+        } else if (strKey.equals("2")) {
             keyCode = KeyEvent.KEYCODE_2;
-        }
-        else if (strKey.equals("3"))
-        {
+        } else if (strKey.equals("3")) {
             keyCode = KeyEvent.KEYCODE_3;
-        }
-        else if (strKey.equals("4"))
-        {
+        } else if (strKey.equals("4")) {
             keyCode = KeyEvent.KEYCODE_4;
-        }
-        else if (strKey.equals("5"))
-        {
+        } else if (strKey.equals("5")) {
             keyCode = KeyEvent.KEYCODE_5;
-        }
-        else if (strKey.equals("6"))
-        {
+        } else if (strKey.equals("6")) {
             keyCode = KeyEvent.KEYCODE_6;
-        }
-        else if (strKey.equals("7"))
-        {
+        } else if (strKey.equals("7")) {
             keyCode = KeyEvent.KEYCODE_7;
-        }
-        else if (strKey.equals("8"))
-        {
+        } else if (strKey.equals("8")) {
             keyCode = KeyEvent.KEYCODE_8;
-        }
-        else if (strKey.equals("9"))
-        {
+        } else if (strKey.equals("9")) {
             keyCode = KeyEvent.KEYCODE_9;
         }
-        if (keyCode > 0)
-        {
+        if (keyCode > 0) {
             KeyEvent ke = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
             Log.i(NativeEditPlugin.LOG_TAG, String.format("Force fire KEY EVENT %d", keyCode));
             edit.onKeyDown(keyCode, ke);

@@ -252,6 +252,11 @@ public class NativeEditBox : PluginMsgReceiver {
 			string text = jsonMsg.GetString("text");
 			this.onTextEditEnd(text);
 		}
+		else if (msg.Equals(MSG_SET_FOCUS))
+		{
+			bool focus = jsonMsg.GetBool("focus");
+			this.SetFocus(focus);
+		}
 		else if (msg.Equals(MSG_RETURN_PRESSED))
 		{
 			if (returnPressed != null)
