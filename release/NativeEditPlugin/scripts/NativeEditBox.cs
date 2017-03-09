@@ -185,7 +185,6 @@ public class NativeEditBox : PluginMsgReceiver
 
 	private IEnumerator InitialzieOnNextFrame()
 	{
-		// this is to avoid a deadlock for more info when trying to get data from two separate native plugins and handling them in Unity
 		yield return null;
 
 		this.PrepareNativeEdit();
@@ -259,6 +258,7 @@ public class NativeEditBox : PluginMsgReceiver
 
 	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
 	{
+		// this is to avoid a deadlock for more info when trying to get data from two separate native plugins and handling them in Unity
 		yield return null;
 
 		string msg = jsonMsg.GetString("msg");
