@@ -153,7 +153,7 @@ public class NativeEditBox : PluginMsgReceiver
 		// Wait until the end of frame before initializing to ensure that Unity UI layout has been built. We used to
 		// initialize at Start, but that resulted in an invalid RectTransform position and size on the InputField if it
 		// was instantiated at runtime instead of being built in to the scene.
-		StartCoroutine(InitializeAtEndOfFrame());
+		StartCoroutine(InitialzieOnNextFrame());
 	}
 
 	private void OnEnable()
@@ -183,8 +183,9 @@ public class NativeEditBox : PluginMsgReceiver
 		this.SetVisible(hasFocus);
 	}
 
-	private IEnumerator InitializeAtEndOfFrame()
+	private IEnumerator InitialzieOnNextFrame()
 	{
+		// this is to avoid a deadlock for more info when trying to get data from two separate native plugins and handling them in Unity
 		yield return null;
 
 		this.PrepareNativeEdit();
@@ -253,8 +254,7 @@ public class NativeEditBox : PluginMsgReceiver
 
 	public override void OnPluginMsgDirect(JsonObject jsonMsg)
 	{
-		if(this.gameObject.activeInHierarchy)
-			StartCoroutine(PluginsMessageRoutine(jsonMsg));
+		PluginMsgHandler.getInst().StartCoroutine(PluginsMessageRoutine(jsonMsg));
 	}
 
 	private IEnumerator PluginsMessageRoutine(JsonObject jsonMsg)
