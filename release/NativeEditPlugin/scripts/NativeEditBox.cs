@@ -75,6 +75,7 @@ public class NativeEditBox : PluginMsgReceiver
 	private InputField	objUnityInput;
 	private Text objUnityText;
 	private bool focusOnCreate;
+	private bool visibleOnCreate = true;
 
 	private const string MSG_CREATE = "CreateEdit";
 	private const string MSG_REMOVE = "RemoveEdit";
@@ -345,6 +346,9 @@ public class NativeEditBox : PluginMsgReceiver
 		JsonObject jsonRet = this.SendPluginMsg(jsonMsg);
 		bNativeEditCreated = !this.CheckErrorJsonRet(jsonRet);
 
+		if (!visibleOnCreate)
+			SetVisible(false);
+
 		if (focusOnCreate)
 			SetFocus(true);
 	}
@@ -413,6 +417,12 @@ public class NativeEditBox : PluginMsgReceiver
 
 	public void SetVisible(bool bVisible)
 	{
+		if (!bNativeEditCreated)
+		{
+			visibleOnCreate = bVisible;
+			return;
+		}
+
 		JsonObject jsonMsg = new JsonObject();
 		
 		jsonMsg["msg"] = MSG_SET_VISIBLE;
