@@ -90,6 +90,7 @@ public class NativeEditBox : PluginMsgReceiver
 	private const string MSG_GET_TEXT = "GetText";
 
 	public InputField InputField { get { return objUnityInput; } }
+	public bool Visible { get; private set; }
 
 	public string text
 	{
@@ -177,7 +178,7 @@ public class NativeEditBox : PluginMsgReceiver
 
 	private void OnApplicationFocus(bool hasFocus)
 	{
-		if (!bNativeEditCreated)
+		if (!bNativeEditCreated || !this.Visible)
 			return;
 
 		this.SetVisible(hasFocus);
@@ -418,6 +419,8 @@ public class NativeEditBox : PluginMsgReceiver
 		jsonMsg["isVisible"] = bVisible;
 		
 		this.SendPluginMsg(jsonMsg);
+
+		this.Visible = bVisible;
 	}
 
 	#if UNITY_ANDROID && !UNITY_EDITOR
