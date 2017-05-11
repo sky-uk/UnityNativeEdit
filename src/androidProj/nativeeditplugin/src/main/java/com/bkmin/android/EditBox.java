@@ -307,6 +307,7 @@ public class EditBox {
             });
 
             edit.addTextChangedListener(new TextWatcher() {
+
                 public void afterTextChanged(Editable s)
                 {
                     JSONObject jsonToUnity = new JSONObject();
@@ -332,7 +333,6 @@ public class EditBox {
                 public void beforeTextChanged(CharSequence s, int start,
                                               int count, int after) {
                     // TODO Auto-generated method stub
-
                 }
 
                 @Override
@@ -380,7 +380,23 @@ public class EditBox {
     private void SetText(String newText)
     {
         if (edit != null) {
+            int cursorPos = edit.getSelectionStart();
+            int previousLength = edit.getText().length();
+
             edit.setText(newText);
+
+            // Update text selection (cursor position) to be the same after editing text
+            // If the user had multiple characters selected, we are losing them and get the cursor in only one position
+            if(previousLength == cursorPos){
+                //The cursor was at the end of the text, let us put it again at the end of the text in case more characters were added
+                cursorPos = newText.length();
+            }
+
+            if(cursorPos > newText.length()){
+                //Text was deleted, so cursor position is after the end of the text, let's put it at the last position
+                cursorPos = newText.length() + 1;
+            }
+            edit.setSelection(cursorPos);
         }
     }
     private String GetText()
