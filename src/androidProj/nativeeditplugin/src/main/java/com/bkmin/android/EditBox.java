@@ -385,7 +385,8 @@ public class EditBox {
 
             edit.setText(newText);
 
-            //Update text selection (cursor position) to be the same after editing text, if the user had multiple characters selected, we are losing them and get the cursor in only one position
+            // Update text selection (cursor position) to be the same after editing text
+            // If the user had multiple characters selected, we are losing them and get the cursor in only one position
             if(previousLength == cursorPos){
                 //The cursor was at the end of the text, let us put it again at the end of the text in case more characters were added
                 cursorPos = newText.length();
