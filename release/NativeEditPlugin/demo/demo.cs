@@ -11,7 +11,7 @@ public class demo : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		rectTrans = testNativeEdit.transform.FindChild("Text").GetComponent<RectTransform>();
+		rectTrans = testNativeEdit.transform.Find("Text").GetComponent<RectTransform>();
 
 		GameObject tempTest = GameObject.Instantiate(testNativeEdit.gameObject);
 		tempTest.transform.SetParent(mainCanvas.transform, false);
