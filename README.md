@@ -14,6 +14,9 @@ This means you don't need a separate 'Unity' Input box and you can use all nativ
     <activity android:name="com.unity3d.player.UnityPlayerNativeActivity"
         android:label="@string/app_name">
     ```
+
+    Note that there can be multiple Android manifests in a Unity project (if you have multiple Android plugins) and Unity merges them to a single manifest when building. The `activity` on the manifest closest to the root level of `Plugins/Android` directory seems to override definitions in other manifests so make sure to modify that manifest.
+
     If another plugin you're using is overriding the `UnityPlayerActivity` and the input field appears invisible you need to modify the overriding `UnityPlayerActivity` so that it doesn't appear on top of native views, see https://github.com/YousicianGit/UnityNativeEdit/issues/34.
     
     You can refer to sample `AndroidManifest.xml` in `/Plugings/Android` folder.
