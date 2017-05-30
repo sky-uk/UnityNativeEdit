@@ -123,12 +123,6 @@ public class EditBox {
         }
     }
 
-    private void notifyVisibilityChanged(int visibility) {
-        if(visibility != View.VISIBLE) {
-            showKeyboard(false);
-        }
-    }
-
     private void processJsonMsg(JSONObject jsonMsg)
     {
         try
