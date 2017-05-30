@@ -31,13 +31,15 @@ public class EditBox {
     class EditTextLifeCycle extends EditText
     {
         EditBox observerBox;
-        public EditTextLifeCycle(Context context, EditBox box) {
+        public EditTextLifeCycle(Context context, EditBox box)
+        {
             super(context);
             this.observerBox = box;
         }
 
         @Override
-        public void onWindowFocusChanged(boolean hasWindowFocus) {
+        public void onWindowFocusChanged(boolean hasWindowFocus)
+        {
             super.onWindowFocusChanged(hasWindowFocus);
             if (!hasWindowFocus)
                 observerBox.notifyFocusChanged(hasWindowFocus);
@@ -117,10 +119,10 @@ public class EditBox {
         }
     }
 
-    private void notifyFocusChanged(boolean hasWindowFocus) {
-        if(!hasWindowFocus) {
+    private void notifyFocusChanged(boolean hasWindowFocus)
+    {
+        if(!hasWindowFocus)
             showKeyboard(false);
-        }
     }
 
     private void processJsonMsg(JSONObject jsonMsg)
