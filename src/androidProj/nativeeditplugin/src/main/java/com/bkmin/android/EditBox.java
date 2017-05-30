@@ -4,10 +4,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -24,7 +26,32 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class EditBox {
-    private EditText edit;
+
+    // Simplest way to notify the EditBox about the application lifecycle.
+    class EditTextLifeCycle extends EditText
+    {
+        EditBox observerBox;
+        public EditTextLifeCycle(Context context, EditBox box) {
+            super(context);
+            this.observerBox = box;
+        }
+
+        @Override
+        protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+            super.onVisibilityChanged(changedView, visibility);
+            if (visibility != View.VISIBLE)
+                observerBox.notifyVisibilityChanged(visibility);
+        }
+
+        @Override
+        public void onWindowFocusChanged(boolean hasWindowFocus) {
+            super.onWindowFocusChanged(hasWindowFocus);
+            if (!hasWindowFocus)
+                observerBox.notifyFocusChanged(hasWindowFocus);
+        }
+    }
+
+    private EditTextLifeCycle edit;
     private final RelativeLayout layout;
     private int tag;
     private int characterLimit;
@@ -94,6 +121,18 @@ public class EditBox {
         {
             rootView.clearFocus();
             imm.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+        }
+    }
+
+    private void notifyFocusChanged(boolean hasWindowFocus) {
+        if(!hasWindowFocus) {
+            showKeyboard(false);
+        }
+    }
+
+    private void notifyVisibilityChanged(int visibility) {
+        if(visibility != View.VISIBLE) {
+            showKeyboard(false);
         }
     }
 
@@ -180,7 +219,7 @@ public class EditBox {
             String alignment = jsonObj.getString("align");
             boolean multiline = jsonObj.getBoolean("multiline");
 
-            edit = new EditText(NativeEditPlugin.unityActivity.getApplicationContext());
+            edit = new EditTextLifeCycle(NativeEditPlugin.unityActivity.getApplicationContext(), this);
 
             // It's important to set this first as it resets some things, for example character hiding if content type is password.
             edit.setSingleLine(!multiline);
