@@ -37,13 +37,6 @@ public class EditBox {
         }
 
         @Override
-        protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
-            super.onVisibilityChanged(changedView, visibility);
-            if (visibility != View.VISIBLE)
-                observerBox.notifyVisibilityChanged(visibility);
-        }
-
-        @Override
         public void onWindowFocusChanged(boolean hasWindowFocus) {
             super.onWindowFocusChanged(hasWindowFocus);
             if (!hasWindowFocus)
