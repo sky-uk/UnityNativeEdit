@@ -400,6 +400,7 @@ public class EditBox {
     {
         if (edit != null) {
             layout.removeView(edit);
+            mapEditBox.remove(this.tag);
         }
         edit = null;
     }
