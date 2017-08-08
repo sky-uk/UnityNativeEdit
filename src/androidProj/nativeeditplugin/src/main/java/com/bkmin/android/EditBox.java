@@ -155,8 +155,9 @@ public class EditBox {
                     break;
             }
 
-        } catch (JSONException e)
+        } catch (Exception e)
         {
+            Log.e(NativeEditPlugin.LOG_TAG, "Exception in native EditBox.processJsonMsg(). " + e.getMessage());
         }
     }
 
