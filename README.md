@@ -28,3 +28,10 @@ This means you don't need a separate 'Unity' Input box and you can use all nativ
 1. NativeEditBox will work with delegate defined in your Unity UI InputField, `On Value Change` and `End Edit`
 2. It's open source and free to use/redistribute!
 3. Please refer to `demo` Unity project.
+
+## Building the Android plugin
+1. Open the `src/androidProj` directory in AndroidStudio.
+2. Select View -> Tool Windows -> Gradle in AndroidStudio.
+3. In Gradle run the :nativeeditplugin -> other -> makeJar task.
+4. It's a bit confusing but the task seems to generate .aar files (even though it was called makeJar, not sure what's up with that) in the `src/androidProj/nativeeditplugin/build/outputs/aar` directory.
+5. To test in the demo Unity project copy the `nativeeditplugin-release.aar` file (from the output directory) to the `release\NativeEditPlugin\Plugins\Android` directory. This file is symlinked to the Unity demo project.
