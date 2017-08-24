@@ -30,6 +30,8 @@ This means you don't need a separate 'Unity' Input box and you can use all nativ
 3. Please refer to `demo` Unity project.
 
 ## Building the Android plugin
+If you want to tinker with the project yourself you need to build the Android project again in AndroidStudio (for iOS you can just modify the Objective-C code and it will get built at the same time as the Unity project). 
+
 1. Open the `src/androidProj` directory in AndroidStudio.
 2. Select View -> Tool Windows -> Gradle in AndroidStudio.
 3. In Gradle run the :nativeeditplugin -> other -> makeJar task.
