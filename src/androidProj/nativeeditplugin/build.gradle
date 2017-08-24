@@ -36,8 +36,8 @@ task clearJar(type: Delete) {
 task makeJar(type: Copy) {
     from('build/intermediates/bundles/release/')
     into('build/outputs/')
-    include('classes.jar')
-    rename ('classes.jar', 'nativeeditplugin.jar')
+    include('UnityPlayer.jar')
+    rename ('UnityPlayer.jar', 'nativeeditplugin.jar')
 }
 
 makeJar.dependsOn(clearJar, build)
