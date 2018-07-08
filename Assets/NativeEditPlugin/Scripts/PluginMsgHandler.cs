@@ -29,186 +29,193 @@ using System;
 using System.IO;
 using AOT;
 
-public class PluginMsgHandler : MonoBehaviour {
-	private static PluginMsgHandler inst;
-	public 	static PluginMsgHandler getInst() {		return inst; }
+namespace NativeEdit
+{
+    public class PluginMsgHandler : MonoBehaviour
+    {
+        private static PluginMsgHandler inst;
+        public static PluginMsgHandler getInst() { return inst; }
 
-	#if UNITY_IPHONE
-	private static bool sPluginInitialized = false;
-	#endif
+#if UNITY_IPHONE
+        private static bool sPluginInitialized = false;
+#endif
 
-	private int	snCurReceiverIdx = 0;
-	private Dictionary<int, PluginMsgReceiver>		m_dictReceiver = new Dictionary<int, PluginMsgReceiver>();
-	
-	private static StreamWriter fileWriter = null;
+        private int snCurReceiverIdx = 0;
+        private Dictionary<int, PluginMsgReceiver> m_dictReceiver = new Dictionary<int, PluginMsgReceiver>();
 
-	public delegate void ShowKeyboardDelegate(bool bKeyboardShow, int nKeyHeight);
-	public ShowKeyboardDelegate OnShowKeyboard = null; 
+        private static StreamWriter fileWriter = null;
 
-	private static string MSG_SHOW_KEYBOARD = "ShowKeyboard";
-	private static string DEFAULT_NAME = "NativeEditPluginHandler";
-	private static bool   ENABLE_WRITE_LOG = false;
-	private static GameObject instance;
+        public delegate void ShowKeyboardDelegate(bool bKeyboardShow, int nKeyHeight);
+        public ShowKeyboardDelegate OnShowKeyboard = null;
 
-	private bool IsEditor {
-		get {
-			#if UNITY_EDITOR
-			return true;
-			#else
+        private static string MSG_SHOW_KEYBOARD = "ShowKeyboard";
+        private static string DEFAULT_NAME = "NativeEditPluginHandler";
+        private static bool ENABLE_WRITE_LOG = false;
+        private static GameObject instance;
+
+        private bool IsEditor
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return true;
+#else
 			return false;
-			#endif
-		}
-	}
+#endif
+            }
+        }
 
-	private bool IsStandalone {
-		get {			
-			#if UNITY_STANDALONE
+        private bool IsStandalone
+        {
+            get
+            {
+#if UNITY_STANDALONE
 			return true;
-			#else
-			return false;
-			#endif
-		}
-	}
+#else
+                return false;
+#endif
+            }
+        }
 
 
-	void Awake()
-	{
-		// Don't destroy on load and make sure there is only one instance existing. Without this the
-		// events didn't seem to work after a scene reload.
-		if (instance != null)
-		{
-			Destroy(gameObject);
-			return;
-		}
-		instance = gameObject;
-		
-		// If instantiated in a non-root object (e.g. Zenject ProjectContext subcontainer),
-		// Don't use DontDestroyOnLoad
-		if (gameObject.transform.parent == null)
-		{
-			DontDestroyOnLoad(gameObject);
-		}
+        void Awake()
+        {
+            // Don't destroy on load and make sure there is only one instance existing. Without this the
+            // events didn't seem to work after a scene reload.
+            if (instance != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            instance = gameObject;
 
-		int tempRandom = (int) UnityEngine.Random.Range(0, 10000.0f);
-		this.name = DEFAULT_NAME + tempRandom.ToString();
+            // If instantiated in a non-root object (e.g. Zenject ProjectContext subcontainer),
+            // Don't use DontDestroyOnLoad
+            if (gameObject.transform.parent == null)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
 
-		if (ENABLE_WRITE_LOG)
-		{
-			string fileName = Application.persistentDataPath + "/unity_app.log";
-			fileWriter = File.CreateText(fileName);
-			fileWriter.WriteLine("[LogWriter] Initialized");
-			Debug.Log(string.Format("log location {0}", fileName));
-		}
-		inst = this;
-		this.InitializeHandler();
-	}
+            int tempRandom = (int)UnityEngine.Random.Range(0, 10000.0f);
+            this.name = DEFAULT_NAME + tempRandom.ToString();
 
-	void OnDestroy()
-	{
-		FileLog("Application closed");
-		if (fileWriter != null) fileWriter.Close();
-		fileWriter = null;
-		this.FinalizeHandler();
-	}
+            if (ENABLE_WRITE_LOG)
+            {
+                string fileName = Application.persistentDataPath + "/unity_app.log";
+                fileWriter = File.CreateText(fileName);
+                fileWriter.WriteLine("[LogWriter] Initialized");
+                Debug.Log(string.Format("log location {0}", fileName));
+            }
+            inst = this;
+            this.InitializeHandler();
+        }
 
-	public int RegisterAndGetReceiverId(PluginMsgReceiver receiver)
-	{
-		int index = snCurReceiverIdx;
-		snCurReceiverIdx++;
+        void OnDestroy()
+        {
+            FileLog("Application closed");
+            if (fileWriter != null) fileWriter.Close();
+            fileWriter = null;
+            this.FinalizeHandler();
+        }
 
-		m_dictReceiver[index] = receiver;
-		return index;
-	}
+        public int RegisterAndGetReceiverId(PluginMsgReceiver receiver)
+        {
+            int index = snCurReceiverIdx;
+            snCurReceiverIdx++;
 
-	public void RemoveReceiver(int nReceiverId)
-	{
-		m_dictReceiver.Remove(nReceiverId);
-	}
+            m_dictReceiver[index] = receiver;
+            return index;
+        }
 
-	public void FileLog(string strLog, string strTag = "NativeEditBoxLog")
-	{
-		string strOut = string.Format("[!] {0} {1} [{2}]",strTag, strLog, DateTime.Now.ToLongTimeString());
+        public void RemoveReceiver(int nReceiverId)
+        {
+            m_dictReceiver.Remove(nReceiverId);
+        }
 
-		if (fileWriter != null)
-		{
-			fileWriter.WriteLine(strOut);
-			fileWriter.Flush();
-		}
-		
-		Debug.Log(strOut);
-	}
-	public void FileLogError(string strLog)
-	{
-		string strOut = string.Format("[!ERROR!] {0} [{1}]", strLog, DateTime.Now.ToLongTimeString());
-		if (fileWriter != null)
-		{
-			fileWriter.WriteLine(strOut);
-			fileWriter.Flush();
-		}
-		Debug.Log(strOut);
-	}
-	public PluginMsgReceiver GetReceiver(int nSenderId)
-	{
-		return m_dictReceiver[nSenderId];
-	}
-	
-	private void OnMsgFromPlugin(string jsonPluginMsg)
-	{
-		if (jsonPluginMsg == null) return;
+        public void FileLog(string strLog, string strTag = "NativeEditBoxLog")
+        {
+            string strOut = string.Format("[!] {0} {1} [{2}]", strTag, strLog, DateTime.Now.ToLongTimeString());
 
-		JsonObject jsonMsg = new JsonObject(jsonPluginMsg);
+            if (fileWriter != null)
+            {
+                fileWriter.WriteLine(strOut);
+                fileWriter.Flush();
+            }
 
-		string msg = jsonMsg.GetString("msg");
+            Debug.Log(strOut);
+        }
+        public void FileLogError(string strLog)
+        {
+            string strOut = string.Format("[!ERROR!] {0} [{1}]", strLog, DateTime.Now.ToLongTimeString());
+            if (fileWriter != null)
+            {
+                fileWriter.WriteLine(strOut);
+                fileWriter.Flush();
+            }
+            Debug.Log(strOut);
+        }
+        public PluginMsgReceiver GetReceiver(int nSenderId)
+        {
+            return m_dictReceiver[nSenderId];
+        }
 
-		if (msg.Equals(MSG_SHOW_KEYBOARD))
-		{
-			bool bShow = jsonMsg.GetBool("show");
-			int nKeyHeight = (int)( jsonMsg.GetFloat("keyheight") * (float) Screen.height);
-			//FileLog(string.Format("keyshow {0} height {1}", bShow, nKeyHeight));
-			if (OnShowKeyboard != null) 
-			{
-				OnShowKeyboard(bShow, nKeyHeight);
-			}
-		}
-		else
-		{
-			int nSenderId = jsonMsg.GetInt("senderId");
+        private void OnMsgFromPlugin(string jsonPluginMsg)
+        {
+            if (jsonPluginMsg == null) return;
 
-			// In some cases the receiver might be already removed, for example if a button is pressed
-			// that will destoy the receiver while the input field is focused an end editing message
-			// will be sent from the plugin after the receiver is already destroyed on Unity side.
-			if (m_dictReceiver.ContainsKey(nSenderId))
-			{
-				PluginMsgReceiver receiver = PluginMsgHandler.getInst().GetReceiver(nSenderId);
-				receiver.OnPluginMsgDirect(jsonMsg);
-			}
-		}
-	}
-	
-	#if UNITY_IPHONE  
-	[DllImport ("__Internal")]
-	private static extern void _iOS_InitPluginMsgHandler(string unityName);
-	[DllImport ("__Internal")]
-	private static extern string _iOS_SendUnityMsgToPlugin(int nSenderId, string strMsg);
-	[DllImport ("__Internal")]
-	private static extern void _iOS_ClosePluginMsgHandler();	
+            JsonObject jsonMsg = new JsonObject(jsonPluginMsg);
 
-	public void InitializeHandler()
-	{		
-		if (IsEditor || sPluginInitialized) return;
+            string msg = jsonMsg.GetString("msg");
 
-		_iOS_InitPluginMsgHandler(this.name);
-		sPluginInitialized = true;
-	}
-	
-	public void FinalizeHandler()
-	{
-		if (!IsEditor)
-			_iOS_ClosePluginMsgHandler();
-		
-	}
+            if (msg.Equals(MSG_SHOW_KEYBOARD))
+            {
+                bool bShow = jsonMsg.GetBool("show");
+                int nKeyHeight = (int)(jsonMsg.GetFloat("keyheight") * (float)Screen.height);
+                //FileLog(string.Format("keyshow {0} height {1}", bShow, nKeyHeight));
+                if (OnShowKeyboard != null)
+                {
+                    OnShowKeyboard(bShow, nKeyHeight);
+                }
+            }
+            else
+            {
+                int nSenderId = jsonMsg.GetInt("senderId");
 
-	#elif UNITY_ANDROID 
+                // In some cases the receiver might be already removed, for example if a button is pressed
+                // that will destoy the receiver while the input field is focused an end editing message
+                // will be sent from the plugin after the receiver is already destroyed on Unity side.
+                if (m_dictReceiver.ContainsKey(nSenderId))
+                {
+                    PluginMsgReceiver receiver = PluginMsgHandler.getInst().GetReceiver(nSenderId);
+                    receiver.OnPluginMsgDirect(jsonMsg);
+                }
+            }
+        }
+
+#if UNITY_IPHONE
+        [DllImport("__Internal")]
+        private static extern void _iOS_InitPluginMsgHandler(string unityName);
+        [DllImport("__Internal")]
+        private static extern string _iOS_SendUnityMsgToPlugin(int nSenderId, string strMsg);
+        [DllImport("__Internal")]
+        private static extern void _iOS_ClosePluginMsgHandler();
+
+        public void InitializeHandler()
+        {
+            if (IsEditor || sPluginInitialized) return;
+
+            _iOS_InitPluginMsgHandler(this.name);
+            sPluginInitialized = true;
+        }
+
+        public void FinalizeHandler()
+        {
+            if (!IsEditor)
+                _iOS_ClosePluginMsgHandler();
+
+        }
+
+#elif UNITY_ANDROID
 
 	private static AndroidJavaClass smAndroid;
 	public void InitializeHandler()
@@ -228,7 +235,7 @@ public class PluginMsgHandler : MonoBehaviour {
 			smAndroid.CallStatic("ClosePluginMsgHandler");
 	}
 
-	#else
+#else
 	public void InitializeHandler()
 	{
 	}
@@ -236,26 +243,27 @@ public class PluginMsgHandler : MonoBehaviour {
 	{
 	}
 
-	#endif
+#endif
 
-	
-	public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
-	{	
-		#if UNITY_EDITOR || UNITY_STANDALONE
-			return new JsonObject();
-		#else
+
+        public JsonObject SendMsgToPlugin(int nSenderId, JsonObject jsonMsg)
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+            return new JsonObject();
+#else
 			jsonMsg["senderId"] = nSenderId;
 			string strJson = jsonMsg.Serialize();
 
 			string strRet = "";
-			#if UNITY_IPHONE
+#if UNITY_IPHONE
 			strRet = _iOS_SendUnityMsgToPlugin(nSenderId, strJson);
-			#elif UNITY_ANDROID 
+#elif UNITY_ANDROID
 			strRet = smAndroid.CallStatic<string>("SendUnityMsgToPlugin", nSenderId, strJson);
-			#endif
+#endif
 
 			JsonObject jsonRet = new JsonObject(strRet);
 			return jsonRet;
-		#endif
-	}
+#endif
+        }
+    }
 }
