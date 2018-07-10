@@ -212,6 +212,9 @@ namespace NativeEdit
             {
                 SetRectNative(this.objUnityText.rectTransform);
             }
+
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+                this.SetFocus(false);
         }
 
         private void PrepareNativeEdit()
