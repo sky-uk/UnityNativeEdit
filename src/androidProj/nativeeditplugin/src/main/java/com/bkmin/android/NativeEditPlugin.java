@@ -54,7 +54,7 @@ public class NativeEditPlugin {
                         RelativeLayout.LayoutParams.MATCH_PARENT);
                 topViewGroup.addView(mainLayout, rlp);
 
-                rootView.setOnSystemUiVisibilityChangeListener
+/*                rootView.setOnSystemUiVisibilityChangeListener
                         (new View.OnSystemUiVisibilityChangeListener() {
                             @Override
                             public void onSystemUiVisibilityChange(int visibility) {
@@ -66,7 +66,7 @@ public class NativeEditPlugin {
                                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
                             }
-                        });
+                        });*/
             }
         });
     }
