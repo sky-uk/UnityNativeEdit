@@ -205,7 +205,7 @@ namespace NativeEdit
         {
             if (!IsEditor)
                 _iOS_ClosePluginMsgHandler();
-
+            sPluginInitialized = false;
         }
 
 #elif UNITY_ANDROID
