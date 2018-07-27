@@ -18,16 +18,6 @@ public class Demo : MonoBehaviour
         GameObject tempTest = GameObject.Instantiate(testNativeEdit.gameObject);
         tempTest.transform.SetParent(mainCanvas.transform, false);
         tempTest.transform.position += new Vector3(0.0f, -250.0f, 0.0f);
-
-        NativeEditBox tempNB = tempTest.GetComponent<NativeEditBox>(); ;
-        //		tempNB.SetTextNative("fdfdsfsd");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
     }
 
     private string GetCurObjName()
@@ -60,7 +50,6 @@ public class Demo : MonoBehaviour
     {
         bTempFocus = !bTempFocus;
         Debug.Log("OnButton1 clicked");
-        //		testNativeEdit.SetFocusNative(bTempFocus);
     }
 
     public void OnButton2()
@@ -80,9 +69,5 @@ public class Demo : MonoBehaviour
     public void OnButton5()
     {
         Debug.Log("OnButton5 clicked");
-        //		testNativeEdit.SetTextNative("TestText Set!!@#@5");
     }
-
-
-
 }
